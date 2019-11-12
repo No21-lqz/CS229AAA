@@ -50,7 +50,7 @@ def load_csv(csv_path, label_col, add_intercept=False):
 
     return inputs, labels
 
-def load_spam_dataset(csv_path):
+def load_spam_dataset(tsv_path):
     """Load the spam dataset from a TSV file
 
     Args:
