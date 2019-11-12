@@ -24,5 +24,5 @@ def main():
     # like = util.load_spam_dataset('spam_train.tsv', 'likes', add_intercept=False)
     # dislike = util.load_spam_dataset('spam_train.tsv', 'dislikes', add_intercept=False)
     # comment = util.load_spam_dataset('spam_train.tsv', 'comment_count', add_intercept=False)
-    date = util.load_csv('USvideos.csv', label_col='trending_date', add_intercept=False)
+    date = util.load_csv('last_trendingdate_train.csv', label_col='trending_date', add_intercept=False)
 main()
