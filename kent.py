@@ -19,7 +19,6 @@ def load_predict_number_dataset(csv_path):
     # Load headers
     with open(csv_path, encoding='gb18030', errors='ignore', newline='') as csv_fh:
         headers = csv_fh.readline().strip().split(',')
-
     # Load features and labels
     view_cols = [i for i in range(len(headers)) if headers[i] == 'views']
     likes_cols = [i for i in range(len(headers)) if headers[i] == 'likes']
