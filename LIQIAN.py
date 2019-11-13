@@ -26,7 +26,10 @@ def label(view, parameter, view_bar, para_bar):
 
     Returns:
         label, NumPy array shape (n_examples, 1), int
-
+        0: Not hot
+        1: Negative, dislike >> like
+        2: Controdictory, dislike ~= like
+        3: Positive, like >> dislike
         """
     label = np.zeros(np.shape(view))
     n = len(view)
