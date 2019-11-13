@@ -28,16 +28,15 @@ def label(view, parameter, view_bar, para_bar):
         label, NumPy array shape (n_examples, 1), int
 
         """
-
-    label = np.zeros(view.shape())
+    label = np.zeros(np.shape(view))
     n = len(view)
     [bar1, bar2] = para_bar
     for i in range(n):
         if view[i] < view_bar:
             label[i] = 0
-        elif parameter < bar1:
+        elif parameter[i] < bar1:
             label[i] = 1
-        elif para_bar < bar2:
+        elif parameter[i] < bar2:
             label[i] = 2
         else:
             label[i] = 3
