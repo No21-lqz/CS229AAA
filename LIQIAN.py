@@ -1,7 +1,8 @@
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import util
-# import ntlk
+import nltk
 import time
 
 def get_para(view, like, dislike, comment):
@@ -17,12 +18,3 @@ def get_para(view, like, dislike, comment):
     percen_comment = comment / view
     parameter = (percen_like - percen_dislike) * percen_comment
     return parameter
-
-
-def main():
-    # view = util.load_spam_dataset('spam_train.tsv', 'views', add_intercept=False)
-    # like = util.load_spam_dataset('spam_train.tsv', 'likes', add_intercept=False)
-    # dislike = util.load_spam_dataset('spam_train.tsv', 'dislikes', add_intercept=False)
-    # comment = util.load_spam_dataset('spam_train.tsv', 'comment_count', add_intercept=False)
-    date = util.load_csv('last_trendingdate_train.csv', label_col='trending_date', add_intercept=False)
-main()
