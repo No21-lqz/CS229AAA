@@ -42,25 +42,42 @@ def label(view, parameter, view_bar, para_bar):
     return label
 
 
-def get_token(string, header):
+def get_token(string, header, k):
     """
-    Word enbeding
+    Word embedding for token
     Function: remove the punctuation, lowercases words, and covert the words to sequences of integers
     :param string: A list of word, lenth: n
+           header: type of string
+           k: size of dictionary
     :return: A list of integers, representing the word
     Site: https://towardsdatascience.com/recurrent-neural-networks-by-example-in-python-ffd204f99470
     """
     if header == 'tags':
-        tokenizer = Tokenizer(num_words=None,
+        tokenizer = Tokenizer(num_words=k,    # Word with top k frequency
                               filters='!@#$%^&*()_+-=\|{}[]:;">/?<,.~',
                               lower=True, split='|')
     else:
-        tokenizer = Tokenizer(num_words=None,
-                                filters='!@#$%^&*()_+-=\|{}[]:;">/?<,.~',
-                                lower = True)
-    tokenizer.fit_on_sequences(string)
-    strings = tokenizer.texts_to_sequences(string)
-    return strings
+        tokenizer = Tokenizer(num_words=k,
+                              filters='!@#$%^&*()_+-=\|{}[]:;">/?<,.~',
+                              lower=True)
 
-string = 'Jason Momoa & Lisa Bonet: Love at First Sight,The Late Late Show with James Corden'
-print(get_token(string, 'title'))
+    tokenizer.fit_on_texts(string)
+
+    sequences = tokenizer.texts_to_sequences(string)
+    print(tokenizer.index_word)
+    return sequences
+
+def one_hot(string, k):
+    """
+    One hot word embedding
+    :param string: A list of strings
+           k: size of dictionary
+    :return: A matrix of integers reflecting the string
+    """
+    t = Tokenizer(num_words=k,
+                  filters='!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~\t\n',
+                  lower=True, split=' ')
+    t.fit_on_texts(string)
+    #print(t.index_word)       # print dictionary created
+    encoded_docs = t.texts_to_matrix(string, mode='binary')
+    return encoded_docs
