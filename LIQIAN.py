@@ -2,6 +2,7 @@ import numpy as np
 from sklearn.ensemble import GradientBoostingClassifier
 from keras.preprocessing.text import Tokenizer
 import lyp_preprocessing as lyp
+import kent
 
 def get_para(view, like, dislike, comment):
     """
@@ -81,6 +82,15 @@ def one_hot(string, k):
     t.fit_on_texts(string)
     encoded_docs = t.texts_to_matrix(string, mode='binary')
     return encoded_docs
+
+
+def word_embedding(csv_path, size_of_dictionary):
+    title, publish_time, category, tags, description = kent.get_feature(csv_path)
+    one_hot_title = one_hot(title, size_of_dictionary)
+    one_hot_description = one_hot(description, size_of_dictionary)
+    one_hot_tags = one_hot(tags, size_of_dictionary)
+    return one_hot_title, one_hot_description, one_hot_tags, publish_time, category,
+
 
 
 # train_tags = lyp.get_string_header('last_trendingdate_train.csv', 'tags')
