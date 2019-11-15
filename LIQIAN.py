@@ -1,12 +1,6 @@
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
 from sklearn.ensemble import GradientBoostingClassifier
-import util
-import nltk
-import time
-import tokenizer
-
+from keras.preprocessing.text import Tokenizer
 
 def get_para(view, like, dislike, comment):
     """
@@ -48,12 +42,25 @@ def label(view, parameter, view_bar, para_bar):
     return label
 
 
-def get_token(string):
+def get_token(string, header):
     """
+    Word enbeding
     Function: remove the punctuation, lowercases words, and covert the words to sequences of integers
-    :param string: A list of word
-    :return: A list of integers
+    :param string: A list of word, lenth: n
+    :return: A list of integers, representing the word
+    Site: https://towardsdatascience.com/recurrent-neural-networks-by-example-in-python-ffd204f99470
     """
-    tokenizer = Tokenizer(num_words=None,
-                          filters='!@#$%^&*()_+-=\|{}[]:;">/?<,.~',
-                          lower = True, split=' ')
+    if header == 'tags':
+        tokenizer = Tokenizer(num_words=None,
+                              filters='!@#$%^&*()_+-=\|{}[]:;">/?<,.~',
+                              lower=True, split='|')
+    else:
+        tokenizer = Tokenizer(num_words=None,
+                                filters='!@#$%^&*()_+-=\|{}[]:;">/?<,.~',
+                                lower = True)
+    tokenizer.fit_on_sequences(string)
+    strings = tokenizer.texts_to_sequences(string)
+    return strings
+
+string = 'Jason Momoa & Lisa Bonet: Love at First Sight,The Late Late Show with James Corden'
+print(get_token(string, 'title'))
