@@ -23,7 +23,7 @@ def get_string_header(csvpath, header):
 
 #clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, )
 
-def get_time_gap(csvpath, publish_time, trend_time):
+def get_time_gap(publish_time, trend_time):
     """
     :param csvpath: name of csv flie (type: string, like '***.csv')
     :return: a list of time gap (dim: n)
