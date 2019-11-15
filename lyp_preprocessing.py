@@ -23,14 +23,11 @@ def get_string_header(csvpath, header):
 
 #clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, )
 
-def get_time_gap(csvpath):
+def get_time_gap(csvpath, publish_time, trend_time):
     """
     :param csvpath: name of csv flie (type: string, like '***.csv')
     :return: a list of time gap (dim: n)
     """
-    publish_time = np.array(get_string_header(csvpath, 'publish_time'))
-    trend_time = np.array(get_string_header(csvpath, 'trending_date'))
-
     time_gap = list()
     for i in range (publish_time.shape[0]):
         pt_year = int(publish_time[i][0:4])
@@ -38,4 +35,4 @@ def get_time_gap(csvpath):
         tt_year = int('20' + trend_time[i][0:2])
         tt_month = int(trend_time[i][6:8])
         time_gap.append((tt_year - pt_year) * 12 + (tt_month - pt_month))
-
+    return time_gap
