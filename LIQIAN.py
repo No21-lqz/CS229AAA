@@ -1,9 +1,11 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from sklearn.ensemble import GradientBoostingClassifier
 import util
 import nltk
 import time
+import tokenizer
 
 
 def get_para(view, like, dislike, comment):
@@ -44,3 +46,14 @@ def label(view, parameter, view_bar, para_bar):
         else:
             label[i] = 3
     return label
+
+
+def get_token(string):
+    """
+    Function: remove the punctuation, lowercases words, and covert the words to sequences of integers
+    :param string: A list of word
+    :return: A list of integers
+    """
+    tokenizer = Tokenizer(num_words=None,
+                          filters='!@#$%^&*()_+-=\|{}[]:;">/?<,.~',
+                          lower = True, split=' ')
