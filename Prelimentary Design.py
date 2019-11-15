@@ -19,9 +19,9 @@ train_title, train_publish_time, train_category, train_tags, train_description =
 
 # Valid Set
 valid_label = kent.get_label('last_trendingdate_valid.csv', view_bar, para_bar)
-valid_title, valid_publish_time, valid_category, valid_tags, valid_description = kent.get_feature('last_trendingdate_train.csv')
+valid_title, valid_publish_time, valid_category, valid_tags, valid_description = zlq.word_embedding('last_trendingdate_train.csv')
 
 
 #Test Set
 test_label = kent.get_label('last_trendingdate_test.csv', view_bar, para_bar)
-test_title, test_publish_time, test_category, test_tags, test_description = kent.get_feature('last_trendingdate_train.csv')
+test_title, test_publish_time, test_category, test_tags, test_description = zlq.word_embedding('last_trendingdate_train.csv')

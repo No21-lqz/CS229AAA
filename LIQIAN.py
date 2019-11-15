@@ -89,7 +89,7 @@ def word_embedding(csv_path, size_of_dictionary):
     one_hot_title = one_hot(title, size_of_dictionary)
     one_hot_description = one_hot(description, size_of_dictionary)
     one_hot_tags = one_hot(tags, size_of_dictionary)
-    return one_hot_title, one_hot_description, one_hot_tags, publish_time, category,
+    return one_hot_title, publish_time, category, one_hot_tags, one_hot_description
 
 
 
