@@ -3,6 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 import lyp_preprocessing as lyp
+import LIQIAN as zlq
 
 
 def load_predict_number_dataset(csv_path):
@@ -72,3 +73,20 @@ def get_feature(cvs_path):
     tags = lyp.get_string_header('last_trendingdate_train.csv', 'tags')
     description = lyp.get_string_header('last_trendingdate_train.csv', 'description')
     return title, publish_time, category, tags, description
+
+def get_label(csvpath, view_bar, para_bar):
+    """
+    :param csvpath: name of csv flie (type: string, like '***.csv')
+    :param view_bar: number dislike, NumPy array shape (n_examples, 1)
+    :param para_bar: bars of parameters, a list (2,)
+    :return:
+        Label, NumPy array shape (n_examples, 1), int
+        0: Not hot
+        1: Negative, dislike >> like
+        2: Controdictory, dislike ~= like
+        3: Positive, like >> dislike
+    """
+    views, likes, dislikes, comment_count = load_predict_number_dataset(csvpath)
+    parameter = zlq.get_para(views, likes, dislikes, comment_count)
+    label = zlq.label(views, parameter, view_bar, para_bar)
+    return label
