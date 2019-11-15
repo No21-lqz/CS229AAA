@@ -11,7 +11,7 @@ def get_string_header(csvpath, header):
     :param header: input the header of column (type: string)
     :return: a list of string data you want (dim: n)
     """
-    with open(csvpath, 'r') as csvfile:
+    with open(csvpath, 'r', encoding='UTF-8') as csvfile:
         reader = csv.DictReader(csvfile)
         output = [row[header] for row in reader]
     return output
