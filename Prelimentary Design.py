@@ -20,6 +20,10 @@ train_publish_time = lyp.get_string_header('last_trendingdate_train.csv', 'publi
 train_category = kent.load_number_dataset('last_trendingdate_train.csv', 'category_id')
 train_tags = lyp.get_string_header('last_trendingdate_train.csv', 'tags')
 train_description = lyp.get_string_header('last_trendingdate_train.csv', 'description')
+token_title = zlq.get_token(train_title, 'title')
+# token_title = zlq.one_hot(train_title)
+print(np.shape(token_title))
+print(token_title[0])
 
 # Valid Set
 valid_views, valid_likes, valid_dislikes, valid_comment_count = kent.load_predict_number_dataset('last_trendingdate_valid.csv')

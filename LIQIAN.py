@@ -51,16 +51,33 @@ def get_token(string, header):
     Site: https://towardsdatascience.com/recurrent-neural-networks-by-example-in-python-ffd204f99470
     """
     if header == 'tags':
-        tokenizer = Tokenizer(num_words=None,
+        tokenizer = Tokenizer(num_words=1000,
                               filters='!@#$%^&*()_+-=\|{}[]:;">/?<,.~',
                               lower=True, split='|')
     else:
-        tokenizer = Tokenizer(num_words=None,
-                                filters='!@#$%^&*()_+-=\|{}[]:;">/?<,.~',
-                                lower = True)
-    tokenizer.fit_on_sequences(string)
-    strings = tokenizer.texts_to_sequences(string)
-    return strings
+        tokenizer = Tokenizer(num_words=10000,
+                              filters='!@#$%^&*()_+-=\|{}[]:;">/?<,.~',
+                              lower=True)
 
-string = 'Jason Momoa & Lisa Bonet: Love at First Sight,The Late Late Show with James Corden'
-print(get_token(string, 'title'))
+    tokenizer.fit_on_texts(string)
+
+    sequences = tokenizer.texts_to_sequences(string)
+    print(tokenizer.index_word)
+    return sequences
+
+def one_hot(string):
+    """
+    One hot word embedding
+    :param string: A list of strings
+    :return: A matrix of integers
+    """
+    t = Tokenizer(num_words=1000,
+                  filters='!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~\t\n',
+                  lower=True, split=' ')
+    t.fit_on_texts(string)
+    #print(t.index_word)
+    encoded_docs = t.texts_to_matrix(string, mode='binary')
+    return encoded_docs
+
+# string = 'Jason Momoa & Lisa Bonet: Love at First Sight,The Late Late Show with James Corden'
+# print(get_token(string, 'title'))
