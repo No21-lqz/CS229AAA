@@ -2,6 +2,7 @@ import util
 import os
 import numpy as np
 import pandas as pd
+import lyp_preprocessing as lyp
 
 
 def load_predict_number_dataset(csv_path):
@@ -53,3 +54,21 @@ def load_number_dataset(csv_path, header):
 
 
     return data
+
+def get_feature(cvs_path):
+    """
+
+    :param: cvs_path: Path to CSV file containing dataset
+    :return:
+        title: a list of string data you want (dim: n)
+        publish_time: a list of string data you want (dim: n)
+        category:a list of string data you want (dim: n)
+        tags:a list of string data you want (dim: n)
+        description:a list of string data you want (dim: n)
+    """
+    title = lyp.get_string_header('last_trendingdate_train.csv', 'title')
+    publish_time = lyp.get_string_header('last_trendingdate_train.csv', 'publish_time')
+    category = load_number_dataset('last_trendingdate_train.csv', 'category_id')
+    tags = lyp.get_string_header('last_trendingdate_train.csv', 'tags')
+    description = lyp.get_string_header('last_trendingdate_train.csv', 'description')
+    return title, publish_time, category, tags, description

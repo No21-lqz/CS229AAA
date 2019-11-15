@@ -64,7 +64,7 @@ def get_token(string, header, k):
     tokenizer.fit_on_texts(string)
 
     sequences = tokenizer.texts_to_sequences(string)
-    print(tokenizer.index_word)
+    #print(tokenizer.index_word)
     return sequences
 
 def one_hot(string, k):
