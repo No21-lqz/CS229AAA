@@ -10,7 +10,8 @@ from sklearn import linear_model
 
 #Initial Boundary
 view_bar, para_bar = 100000, [0, 300]
-
+#Initial size of dictionary
+size_of_dictionary = 1000
 # Training Set
 train_views, train_likes, train_dislikes, train_comment_count = kent.load_predict_number_dataset('last_trendingdate_train.csv')
 train_parameter = zlq.get_para(train_views, train_likes, train_dislikes, train_comment_count)
@@ -20,10 +21,14 @@ train_publish_time = lyp.get_string_header('last_trendingdate_train.csv', 'publi
 train_category = kent.load_number_dataset('last_trendingdate_train.csv', 'category_id')
 train_tags = lyp.get_string_header('last_trendingdate_train.csv', 'tags')
 train_description = lyp.get_string_header('last_trendingdate_train.csv', 'description')
-token_title = zlq.get_token(train_title, 'title')
-# token_title = zlq.one_hot(train_title)
-print(np.shape(token_title))
-print(token_title[0])
+# Word embedding for training set
+token_title = zlq.get_token(train_title, 'title', size_of_dictionary)
+token_description = zlq.get_token(train_description, 'description', size_of_dictionary)
+token_tags = zlq.get_token(train_tags, 'tags', size_of_dictionary)
+one_hot_title = zlq.one_hot(train_title, size_of_dictionary)
+one_hot_description = zlq.one_hot(train_description, size_of_dictionary)
+one_hot_tags = zlq.one_hot(train_tags, size_of_dictionary)
+
 
 # Valid Set
 valid_views, valid_likes, valid_dislikes, valid_comment_count = kent.load_predict_number_dataset('last_trendingdate_valid.csv')
