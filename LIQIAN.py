@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.ensemble import GradientBoostingClassifier
 from keras.preprocessing.text import Tokenizer
+import lyp_preprocessing as lyp
 
 def get_para(view, like, dislike, comment):
     """
@@ -62,9 +63,8 @@ def get_token(string, header, k):
                               lower=True)
 
     tokenizer.fit_on_texts(string)
-
     sequences = tokenizer.texts_to_sequences(string)
-    print(tokenizer.index_word)
+    #print(tokenizer.index_word)       # print dictionary create
     return sequences
 
 def one_hot(string, k):
@@ -73,11 +73,16 @@ def one_hot(string, k):
     :param string: A list of strings
            k: size of dictionary
     :return: A matrix of integers reflecting the string
+             dim: n-examples x m-size of dictionary
     """
     t = Tokenizer(num_words=k,
                   filters='!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~\t\n',
                   lower=True, split=' ')
     t.fit_on_texts(string)
-    #print(t.index_word)       # print dictionary created
     encoded_docs = t.texts_to_matrix(string, mode='binary')
     return encoded_docs
+
+
+# train_tags = lyp.get_string_header('last_trendingdate_train.csv', 'tags')
+# token_tags = one_hot(train_tags, 100)
+# print(token_tags[0], token_tags[1])
