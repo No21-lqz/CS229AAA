@@ -44,7 +44,7 @@ def label(view, parameter, view_bar, para_bar):
 
 def get_token(string, header, k):
     """
-    Word embedding
+    Word embedding for token
     Function: remove the punctuation, lowercases words, and covert the words to sequences of integers
     :param string: A list of word, lenth: n
            header: type of string
@@ -53,7 +53,7 @@ def get_token(string, header, k):
     Site: https://towardsdatascience.com/recurrent-neural-networks-by-example-in-python-ffd204f99470
     """
     if header == 'tags':
-        tokenizer = Tokenizer(num_words=k,
+        tokenizer = Tokenizer(num_words=k,    # Word with top k frequency
                               filters='!@#$%^&*()_+-=\|{}[]:;">/?<,.~',
                               lower=True, split='|')
     else:
@@ -78,9 +78,6 @@ def one_hot(string, k):
                   filters='!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~\t\n',
                   lower=True, split=' ')
     t.fit_on_texts(string)
-    #print(t.index_word)
+    #print(t.index_word)       # print dictionary created
     encoded_docs = t.texts_to_matrix(string, mode='binary')
     return encoded_docs
-
-# string = 'Jason Momoa & Lisa Bonet: Love at First Sight,The Late Late Show with James Corden'
-# print(get_token(string, 'title'))
