@@ -72,7 +72,7 @@ def one_hot(string, k):
     One hot word embedding
     :param string: A list of strings
            k: size of dictionary
-    :return: A matrix of integers
+    :return: A matrix of integers reflecting the string
     """
     t = Tokenizer(num_words=k,
                   filters='!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~\t\n',
