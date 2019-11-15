@@ -94,11 +94,11 @@ def word_embedding(csv_path, size_of_dictionary):
     :return: structured title, tag, description, list type, each with a lenth of dictionary,
              category as integer, publish_time as time
     """
-    title, publish_time, category, tags, description = kent.get_feature(csv_path)
+    title,trending_date, publish_time, category, tags, description = kent.get_feature(csv_path)
     one_hot_title = one_hot(title, size_of_dictionary)
     one_hot_description = one_hot(description, size_of_dictionary)
     one_hot_tags = one_hot(tags, size_of_dictionary)
-    time = lyp.get_time_gap(publish_time)
+    time = lyp.get_time_gap(publish_time, trending_date)
     return one_hot_title, time, category, one_hot_tags, one_hot_description
 
 
