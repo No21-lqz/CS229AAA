@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import util
 #import ntlk
 import time
+import keras
 import csv
 
 def get_string_header(csvpath, header):
@@ -15,3 +16,4 @@ def get_string_header(csvpath, header):
         reader = csv.DictReader(csvfile)
         output = [row[header] for row in reader]
     return output
+
