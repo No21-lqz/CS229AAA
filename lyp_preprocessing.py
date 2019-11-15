@@ -4,6 +4,7 @@ import util
 #import ntlk
 import time
 import keras
+from sklearn.ensemble import GradientBoostingClassifier
 import csv
 
 def get_string_header(csvpath, header):
@@ -17,3 +18,4 @@ def get_string_header(csvpath, header):
         output = [row[header] for row in reader]
     return output
 
+clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0)
