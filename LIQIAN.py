@@ -100,9 +100,12 @@ def word_embedding(csv_path, size_of_dictionary):
     one_hot_description = util.add_intercept_fn(one_hot(description, size_of_dictionary))
     one_hot_tags = util.add_intercept_fn(one_hot(tags, size_of_dictionary))
     time = util.add_intercept_fn(lyp.get_time_gap(publish_time, trending_date))
+    print(np.shape(one_hot_title))
     return one_hot_title, time, category, one_hot_tags, one_hot_description
 
 
 # train_tags = lyp.get_string_header('last_trendingdate_train.csv', 'tags')
 # token_tags = one_hot(train_tags, 100)
 # print(np.shape(token_tags))
+
+
