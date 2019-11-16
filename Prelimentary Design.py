@@ -35,19 +35,31 @@ test_title, test_time, test_category, test_tags, test_description = zlq.word_emb
 
 # voter
 #Training - Voter
+#setting
 y_train = train_label
 clf = SGDClassifier(alpha=0.2, loss="modified_huber", penalty="l2", max_iter=10000, fit_intercept=False)
+
+#train time
 clf.fit(train_time, y_train)
 predict_time = clf.predict_proba(train_time)
+
+#train title
 clf.fit(train_title, y_train)
 predict_title = clf.predict_proba(train_title)
-print(train_time)
+
+#train category
 clf.fit(train_category, y_train)
 predict_category = clf.predict_proba(train_category)
+
+#train tag
 clf.fit(train_tags, y_train)
 predict_tags = clf.predict_proba(train_tags)
+
+#train description
 clf.fit(train_description, y_train)
 predict_description = clf.predict_proba(train_description)
+
+#final train
 train_p = np.array(predict_time, predict_title, predict_category, predict_tags, predict_description)
 print(train_p.shape)
 clf2 = SGDClassifier(alpha=0.2, loss="modified_huber", penalty="l2", max_iter=10000, fit_intercept=True)
