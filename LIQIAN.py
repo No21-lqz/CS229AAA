@@ -123,9 +123,14 @@ def separa_test(publish_time):
     for i in range(len(publish_time)):
         pt_year = int(publish_time[i][0:4])
         pt_month = int(publish_time[i][5:7])
+        pt_date = int(publish_time[i][8:10])
         if pt_year <= 2017 and pt_month < 11 and test_title in title:
             new1 = new1.append([i])
-        elif pt_year == 2018 and pt_month >= 4 and test_title not in title:
+        elif pt_year <= 2017 and pt_month == 11 and pt_date < 13 and test_title in title:
+            new1 = new1.append([i])
+        elif pt_year == 2018 and pt_month > 4:
+            new3 = new3.append([i])
+        elif pt_year == 2018 and pt_month == 4 and pt_date > 14:
             new3 = new3.append([i])
         else:
             new2 = new2.append([i])
