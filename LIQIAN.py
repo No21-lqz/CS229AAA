@@ -1,9 +1,11 @@
 import numpy as np
 from sklearn.ensemble import GradientBoostingClassifier
 from keras.preprocessing.text import Tokenizer
+from sklearn.linear_model import SGDClassifier
 import lyp_preprocessing as lyp
 import kent
 import util
+import collections
 
 def get_para(view, like, dislike, comment):
     """
@@ -86,7 +88,16 @@ def one_hot(string, k):
     return np.array(encoded_docs)
 
 
-def word_embedding(csv_path, size_of_dictionary):
+def one_hot_test(train, test, k):
+    t = Tokenizer(num_words=k,
+                  filters='!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~\t\n',
+                  lower=True, split=' ')
+    t.fit_on_texts(train)
+    encoded_docs = t.texts_to_matrix(test, mode='binary')
+    return np.array(encoded_docs)
+
+
+def word_embedding(csv_path, size_of_dictionary, size_of_dictionary_description):
     """
     Get the structured input data
     :param csv_path: The trina,valid, and test test path, .csv file name
@@ -97,11 +108,23 @@ def word_embedding(csv_path, size_of_dictionary):
     """
     title,trending_date, publish_time, category, tags, description = kent.get_feature(csv_path)
     one_hot_title = util.add_intercept_fn(one_hot(title, size_of_dictionary))
-    one_hot_description = util.add_intercept_fn(one_hot(description, size_of_dictionary))
+    one_hot_description = util.add_intercept_fn(one_hot(description, size_of_dictionary_description))
     one_hot_tags = util.add_intercept_fn(one_hot(tags, size_of_dictionary))
     time = lyp.get_time_gap(publish_time, trending_date)
     time = util.add_intercept_fn(np.reshape(time, (len(time), 1)))
     category = util.add_intercept_fn(np.reshape(category, (len(category), 1)))
+    return one_hot_title, time, category, one_hot_tags, one_hot_description
+
+
+def word_embedding_test(train_path, test_path, size_of_dictionary, size_of_dictionary_description):
+    train_title, train_trending_date, train_publish_time, train_category, train_tags, train_description = kent.get_feature(train_path)
+    test_title, test_trending_date, test_publish_time, test_category, test_tags, test_descriotion = kent.get_feature(test_path)
+    one_hot_title = util.add_intercept_fn(one_hot_test(train_title, test_title,size_of_dictionary))
+    one_hot_description = util.add_intercept_fn(one_hot_test(train_description, test_descriotion, size_of_dictionary_description))
+    one_hot_tags = util.add_intercept_fn(one_hot_test(train_tags, test_tags, size_of_dictionary))
+    time = lyp.get_time_gap(test_publish_time, test_trending_date)
+    time = util.add_intercept_fn(np.reshape(time, (len(time), 1)))
+    category = util.add_intercept_fn(np.reshape(test_category, (len(test_category), 1)))
     return one_hot_title, time, category, one_hot_tags, one_hot_description
 
 
@@ -114,14 +137,12 @@ def separa_test(csv):
              second set: rest of the videos
     """
     new1 = []
-    new2 = []
     new3 = []
     publish_time = kent.get_time(csv)
     test_title = lyp.get_string_header(csv, 'title')
     train_title = lyp.get_string_header(csv, 'title')
     valid_title = lyp.get_string_header(csv, 'title')
     title = train_title + valid_title
-    t = 0
     for i in range(len(publish_time)):
         pt_year = int(publish_time[i][0:4])
         pt_month = int(publish_time[i][5:7])
@@ -148,14 +169,26 @@ def accurancy(y_label, prediction):
     """
     n = len(y_label)
     result = 0
+    new = np.zeros((4, ))
     for i in range(n):
         if y_label[i] == prediction[i]:
             result += 1
+            t = int(y_label[i])
+            new[t] += 1
+    print(new)
     return result / n
 
 
-# train_tags = lyp.get_string_header('last_trendingdate_train.csv', 'tags')
-# token_tags = one_hot(train_tags, 100)
-# print(np.shape(token_tags))
-
+def first_layer(fit_type, train_label, valid_type):
+    """
+    :param fit_type: Description, Title, Tags etc. a list
+    :param train_label: a list of train label
+    :param valid_type:
+    :return: an array of the probability
+    """
+    y_train = train_label
+    clf = SGDClassifier(alpha=0.2, loss="modified_huber", penalty="l2", max_iter=10000, fit_intercept=False)
+    clf.fit(fit_type, y_train)
+    predict = clf._predict_proba(valid_type)
+    return predict
 
