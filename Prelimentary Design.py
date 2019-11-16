@@ -31,6 +31,7 @@ valid_title, valid_time, valid_category, valid_tags, valid_description = zlq.wor
 #Test Set
 test_label = kent.softmax_label('last_trendingdate_test.csv', view_bar, para_bar)
 test_title, test_time, test_category, test_tags, test_description = zlq.word_embedding('last_trendingdate_test.csv',size_of_dictionary)
+test_1, test_2, test3 = zlq.separa_test('last_trendingdate_test.csv')
 
 
 # voter

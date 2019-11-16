@@ -68,13 +68,17 @@ def get_feature(cvs_path):
         tags:a list of string data you want (dim: n)
         description:a list of string data you want (dim: n)
     """
-    title = lyp.get_string_header('last_trendingdate_train.csv', 'title')
-    trending_date = lyp.get_string_header('last_trendingdate_train.csv', 'trending_date')
-    publish_time = lyp.get_string_header('last_trendingdate_train.csv', 'publish_time')
-    category = load_number_dataset('last_trendingdate_train.csv', 'category_id')
-    tags = lyp.get_string_header('last_trendingdate_train.csv', 'tags')
-    description = lyp.get_string_header('last_trendingdate_train.csv', 'description')
+    title = lyp.get_string_header(cvs_path, 'title')
+    trending_date = lyp.get_string_header(cvs_path, 'trending_date')
+    publish_time = lyp.get_string_header(cvs_path, 'publish_time')
+    category = load_number_dataset(cvs_path, 'category_id')
+    tags = lyp.get_string_header(cvs_path, 'tags')
+    description = lyp.get_string_header(cvs_path, 'description')
     return title,trending_date, publish_time, category, tags, description
+
+def get_time(cvs_path):
+    publish_time = lyp.get_string_header(cvs_path, 'publish_time')
+    return publish_time
 
 def get_label(csvpath, view_bar, para_bar):
     """

@@ -105,7 +105,7 @@ def word_embedding(csv_path, size_of_dictionary):
     return one_hot_title, time, category, one_hot_tags, one_hot_description
 
 
-def separa_test(publish_time):
+def separa_test(csv):
     """
     Seprarte the test data by publish date
     :return: three set, containing the index of the video in test set
@@ -116,24 +116,25 @@ def separa_test(publish_time):
     new1 = []
     new2 = []
     new3 = []
-    test_title = lyp.get_string_header('last_trendingdate_test.csv', 'title')
-    train_title = lyp.get_string_header('last_trendingdate_train.csv', 'title')
-    valid_title = lyp.get_string_header('last_trendingdate_valid.csv', 'title')
-    title = train_title.append(valid_title)
+    publish_time = kent.get_time(csv)
+    test_title = lyp.get_string_header(csv, 'title')
+    train_title = lyp.get_string_header(csv, 'title')
+    valid_title = lyp.get_string_header(csv, 'title')
+    title = train_title + valid_title
     for i in range(len(publish_time)):
         pt_year = int(publish_time[i][0:4])
         pt_month = int(publish_time[i][5:7])
         pt_date = int(publish_time[i][8:10])
-        if pt_year <= 2017 and pt_month < 11 and test_title in title:
-            new1 = new1.append([i])
-        elif pt_year <= 2017 and pt_month == 11 and pt_date < 13 and test_title in title:
-            new1 = new1.append([i])
+        if pt_year <= 2017 and pt_month < 11 and test_title[i] in title:
+            new1 += [i]
+        elif pt_year == 2017 and pt_month == 11 and pt_date < 13 and test_title[i] in title:
+            new1 += [i]
         elif pt_year == 2018 and pt_month > 4:
-            new3 = new3.append([i])
+            new3 += [i]
         elif pt_year == 2018 and pt_month == 4 and pt_date > 14:
-            new3 = new3.append([i])
+            new3 += [i]
         else:
-            new2 = new2.append([i])
+            new2 += [i]
     return new1, new2, new3
 
 
