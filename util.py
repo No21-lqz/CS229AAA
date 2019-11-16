@@ -33,22 +33,22 @@ def load_csv(csv_path, label_col, add_intercept=False):
     """
 
     # Load headers
-    with open(csv_path, encoding='gb18030', errors='ignore', newline='') as csv_fh:
+    with open(csv_path, errors='ignore', newline='') as csv_fh:
         headers = csv_fh.readline().strip().split(',')
 
     # Load features and labels
-    x_cols = [i for i in range(len(headers)) if headers[i].startswith('x')]
+    #x_cols = [i for i in range(len(headers)) if headers[i].startswith('x')]
     l_cols = [i for i in range(len(headers)) if headers[i] == label_col]
-    inputs = np.loadtxt(csv_path, delimiter=',', encoding='UTF-8', skiprows=1, usecols=x_cols)
-    labels = np.loadtxt(csv_path, delimiter=',', encoding='UTF-8', skiprows=1, usecols=l_cols)
+    #inputs = np.loadtxt(csv_path, delimiter=',', encoding='UTF-8', skiprows=1, usecols=x_cols)
+    labels = np.loadtxt(csv_path, delimiter=',', skiprows=1, usecols=l_cols)
+    #
+    # if inputs.ndim == 1:
+    #     inputs = np.expand_dims(inputs, -1)
+    #
+    # if add_intercept:
+    #     inputs = add_intercept_fn(inputs)
 
-    if inputs.ndim == 1:
-        inputs = np.expand_dims(inputs, -1)
-
-    if add_intercept:
-        inputs = add_intercept_fn(inputs)
-
-    return inputs, labels
+    return labels
 
 def load_spam_dataset(tsv_path):
     """Load the spam dataset from a TSV file

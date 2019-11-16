@@ -101,7 +101,7 @@ def word_embedding(csv_path, size_of_dictionary):
     one_hot_tags = util.add_intercept_fn(one_hot(tags, size_of_dictionary))
     time = lyp.get_time_gap(publish_time, trending_date)
     time = util.add_intercept_fn(np.reshape(time, (len(time), 1)))
-    category = util.add_intercept_fn(category)
+    category = util.add_intercept_fn(np.reshape(category, (len(category), 1)))
     return one_hot_title, time, category, one_hot_tags, one_hot_description
 
 
@@ -123,8 +123,10 @@ def separa_test(publish_time):
     for i in range(len(publish_time)):
         pt_year = int(publish_time[i][0:4])
         pt_month = int(publish_time[i][5:7])
+        pt_date = int()
         if pt_year <= 2017 and pt_month < 11 and test_title in title:
             new1 = new1.append([i])
+        # elif pt_year == 2018 and pt_month >= 4
     return
 
 
