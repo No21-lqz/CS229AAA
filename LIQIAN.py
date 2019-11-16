@@ -4,6 +4,7 @@ from keras.preprocessing.text import Tokenizer
 import lyp_preprocessing as lyp
 import kent
 import util
+import tensorflow
 
 def get_para(view, like, dislike, comment):
     """
@@ -121,21 +122,22 @@ def separa_test(csv):
     train_title = lyp.get_string_header(csv, 'title')
     valid_title = lyp.get_string_header(csv, 'title')
     title = train_title + valid_title
+    t = 0
     for i in range(len(publish_time)):
         pt_year = int(publish_time[i][0:4])
         pt_month = int(publish_time[i][5:7])
         pt_date = int(publish_time[i][8:10])
-        if pt_year <= 2017 and pt_month < 11 and test_title[i] in title:
+        if pt_year < 2018 and test_title[i] in title:
             new1 += [i]
-        elif pt_year == 2017 and pt_month == 11 and pt_date < 13 and test_title[i] in title:
+        elif pt_year == 2018 and pt_month < 4 and test_title[i] in title:
+            new1 += [i]
+        elif pt_year == 2018 and pt_month == 4 and pt_date < 14 and test_title[i] in title:
             new1 += [i]
         elif pt_year == 2018 and pt_month > 4:
             new3 += [i]
-        elif pt_year == 2018 and pt_month == 4 and pt_date > 14:
+        elif pt_year == 2018 and pt_month == 4 and pt_date >= 14:
             new3 += [i]
-        else:
-            new2 += [i]
-    return new1, new2, new3
+    return new1, new3
 
 
 
