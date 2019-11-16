@@ -31,8 +31,11 @@ valid_title, valid_time, valid_category, valid_tags, valid_description = zlq.wor
 #Test Set
 test_label = kent.softmax_label('last_trendingdate_test.csv', view_bar, para_bar)
 test_title, test_time, test_category, test_tags, test_description = zlq.word_embedding('last_trendingdate_test.csv',size_of_dictionary)
-test_1, test_2, test3 = zlq.separa_test('last_trendingdate_test.csv')
-
+test_1, test_2, test_3 = zlq.separa_test('last_trendingdate_test.csv')
+print(test_1)
+print(len(test_2))
+print(len(test_3))
+print(len(test_title))
 
 # voter
 #Training - Voter
@@ -51,11 +54,10 @@ clf.fit(train_description, y_train)
 predict_description = clf.predict_proba(train_description)
 
 train_p = lyp.create_3d(predict_time, predict_title, predict_category, predict_tags, predict_description)
-print(train_p.shape)
 clf2 = SGDClassifier(alpha=0.2, loss="modified_huber", penalty="l2", max_iter=10000, fit_intercept=True)
-clf2.fit(train_p, train_softmax_label)
-print(clf2.coef_)
-print(clf2.intercept_)
+#clf2.fit(train_p, train_softmax_label)
+#print(clf2.coef_)
+#print(clf2.intercept_)
 
 
 

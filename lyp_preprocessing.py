@@ -56,5 +56,4 @@ def create_3d(a, b, c, d, e):
         train_p[i, :, :] = np.array([a[i], b[i], c[i], d[i], e[i]]).transpose()
     return train_p
 
-def :
 
