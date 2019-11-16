@@ -198,6 +198,8 @@ def GBM_model(train, test, label_train, label_test):
     clf.fit(train, label_train)
     print('Finish fit')
     predict = clf.predict(test)
+    print(collections.Counter(predict))
     print('Finish predict')
     acc = accurancy(label_test, predict)
     return acc
+
