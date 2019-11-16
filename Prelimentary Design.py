@@ -34,9 +34,10 @@ test_title, test_time, test_category, test_tags, test_description = zlq.word_emb
 # voter
 #Training - Voter
 y_train = train_label
-clf = SGDClassifier(alpha=0.1, loss="modified_huber", penalty="l2", max_iter=5)
+clf = SGDClassifier.kerne;(alpha=0.1, loss="modified_huber", penalty="l2", max_iter=5)
 #theta_title = clf.fit(train_title, y_train)
 theta_time = clf.fit(train_time, y_train)
+clf.predict()
 print(theta_time)
 
 
