@@ -105,3 +105,15 @@ def softmax_label(csvpath, view_bar, para_bar):
         index = int(label[i])
         new[i][index] = 1
     return new
+
+def after_stack(time, category,description, tags, title):
+    combined = np.hstack((time, category, description, tags, title))
+    return combined
+
+def second_layer(train_combined, train_label,predict_set, clf):
+    clf.fit(train_combined, train_label)
+    predict = clf.predict(predict_set)
+    return predict
+
+def pred_label(probability):
+    return np.argmax(probability,axis=1)
