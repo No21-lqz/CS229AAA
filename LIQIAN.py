@@ -190,5 +190,6 @@ def first_layer(fit_type, train_label, valid_type):
     clf = SGDClassifier(alpha=0.2, loss="modified_huber", penalty="l2", max_iter=10000, fit_intercept=False)
     clf.fit(fit_type, y_train)
     predict = clf._predict_proba(valid_type)
-    return predict
+    train_probability = clf._predict_proba(fit_type)
+    return predict, train_probability
 
