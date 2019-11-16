@@ -4,7 +4,6 @@ from keras.preprocessing.text import Tokenizer
 import lyp_preprocessing as lyp
 import kent
 import util
-import tensorflow
 
 def get_para(view, like, dislike, comment):
     """
@@ -140,6 +139,19 @@ def separa_test(csv):
     return new1, new3
 
 
+def accurancy(y_label, prediction):
+    """
+    Calculate the accurancy
+    :param y_label: a list of true label
+    :param prediction: a list of predicted label
+    :return: the accurancy, float
+    """
+    n = len(y_label)
+    result = 0
+    for i in range(n):
+        if y_label[i] == prediction[i]:
+            result += 1
+    return result / n
 
 
 # train_tags = lyp.get_string_header('last_trendingdate_train.csv', 'tags')
