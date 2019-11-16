@@ -101,7 +101,33 @@ def word_embedding(csv_path, size_of_dictionary):
     one_hot_tags = util.add_intercept_fn(one_hot(tags, size_of_dictionary))
     time = lyp.get_time_gap(publish_time, trending_date)
     time = util.add_intercept_fn(np.reshape(time, (len(time), 1)))
+    category = util.add_intercept_fn(category)
     return one_hot_title, time, category, one_hot_tags, one_hot_description
+
+
+def separa_test(publish_time):
+    """
+    Seprarte the test data by publish date
+    :return: three set, containing the index of the video in test set
+             first set: videos trended in the train or valid set
+             third set: videos published and trended in the test set
+             second set: rest of the videos
+    """
+    new1 = []
+    new2 = []
+    new3 = []
+    test_title = lyp.get_string_header('last_trendingdate_test.csv', 'title')
+    train_title = lyp.get_string_header('last_trendingdate_train.csv', 'title')
+    valid_title = lyp.get_string_header('last_trendingdate_valid.csv', 'title')
+    title = train_title.append(valid_title)
+    for i in range(len(publish_time)):
+        pt_year = int(publish_time[i][0:4])
+        pt_month = int(publish_time[i][5:7])
+        if pt_year <= 2017 and pt_month < 11 and test_title in title:
+            new1 = new1.append([i])
+    return
+
+
 
 
 # train_tags = lyp.get_string_header('last_trendingdate_train.csv', 'tags')
