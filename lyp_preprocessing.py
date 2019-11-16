@@ -44,3 +44,17 @@ def sigmoid(x):
 def predict(theta, x):
     p = sigmoid(np.matmul(theta, x))
     return p
+
+def create_3d(a, b, c, d, e):
+    """
+    :param a, b, c, d, e: different feature probabolity matrix (dim: n * 4)
+    :return: 3D matrix (dim: n * 4 * 5)
+    """
+    n = a.shape[0]
+    train_p = np.zeros([n, 4, 5])
+    for i in range(n):
+        train_p[i, :, :] = np.array([a[i], b[i], c[i], d[i], e[i]]).transpose()
+    return train_p
+
+def :
+
