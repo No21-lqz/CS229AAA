@@ -193,3 +193,13 @@ def first_layer(fit_type, train_label, valid_type):
     train_probability = clf._predict_proba(fit_type)
     return predict, train_probability
 
+def GBM_model(train, test, label_train, label_test):
+    clf = GradientBoostingClassifier(max_depth = 5, tol = 0.0001)
+    clf.fit(train, label_train)
+    print('Finish fit')
+    predict = clf.predict(test)
+    print(collections.Counter(predict))
+    print('Finish predict')
+    acc = accurancy(label_test, predict)
+    return acc
+
