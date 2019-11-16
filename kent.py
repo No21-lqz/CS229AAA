@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 import lyp_preprocessing as lyp
 import LIQIAN as zlq
+from sklearn.linear_model import SGDClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 
 
 def load_predict_number_dataset(csv_path):
@@ -110,9 +112,10 @@ def after_stack(time, category,description, tags, title):
     combined = np.hstack((time, category, description, tags, title))
     return combined
 
-def second_layer(train_combined, train_label,predict_set, clf):
+def second_layer(train_combined, train_label,predict_set):
+    clf = SGDClassifier(alpha=0.2, loss="modified_huber", penalty="l2", max_iter=10000, fit_intercept=True)
     clf.fit(train_combined, train_label)
-    predict = clf.predict(predict_set)
+    predict = clf.predict_proba(predict_set)
     return predict
 
 def pred_label(probability):
