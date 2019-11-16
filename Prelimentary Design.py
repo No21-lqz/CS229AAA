@@ -49,7 +49,12 @@ predict_tags = clf.predict_proba(train_tags)
 clf.fit(train_description, y_train)
 predict_description = clf.predict_proba(train_description)
 
-
+train_p = lyp.create_3d(predict_time, predict_title, predict_category, predict_tags, predict_description)
+print(train_p.shape)
+clf2 = SGDClassifier(alpha=0.2, loss="modified_huber", penalty="l2", max_iter=10000, fit_intercept=True)
+clf2.fit(train_p, train_softmax_label)
+print(clf2.coef_)
+print(clf2.intercept_)
 
 
 
