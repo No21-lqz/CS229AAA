@@ -92,3 +92,12 @@ def get_label(csvpath, view_bar, para_bar):
     parameter = zlq.get_para(views, likes, dislikes, comment_count)
     label = zlq.label(views, parameter, view_bar, para_bar)
     return label
+
+
+def softmax_label(csvpath, view_bar, para_bar):
+    label = get_label(csvpath, view_bar, para_bar)
+    new = np.zeros((len(label), 4))
+    for i in range(len(label)):
+        index = int(label[i])
+        new[i][index] = 1
+    return new
