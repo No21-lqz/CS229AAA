@@ -3,8 +3,7 @@ from sklearn.ensemble import GradientBoostingClassifier
 from keras.preprocessing.text import Tokenizer
 import lyp_preprocessing as lyp
 import kent
-from keras.models import Sequential
-from keras.layers import LSTM, Dense, Dropout, Masking, Embedding
+import util
 
 def get_para(view, like, dislike, comment):
     """
@@ -77,31 +76,36 @@ def one_hot(string, k):
            k: size of dictionary
     :return: A matrix of integers reflecting the string
              dim: n-examples x m-size of dictionary
+             Type: np.array
     """
     t = Tokenizer(num_words=k,
                   filters='!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~\t\n',
                   lower=True, split=' ')
     t.fit_on_texts(string)
     encoded_docs = t.texts_to_matrix(string, mode='binary')
-    return encoded_docs
+    return np.array(encoded_docs)
 
 
 def word_embedding(csv_path, size_of_dictionary):
     """
-
+    Get the structured input data
     :param csv_path: The trina,valid, and test test path, .csv file name
     :param size_of_dictionary:  a int
     :return: structured title, tag, description, list type, each with a lenth of dictionary,
              category as integer, publish_time as time
+             Type: np.array
     """
     title,trending_date, publish_time, category, tags, description = kent.get_feature(csv_path)
-    one_hot_title = one_hot(title, size_of_dictionary)
-    one_hot_description = one_hot(description, size_of_dictionary)
-    one_hot_tags = one_hot(tags, size_of_dictionary)
+    one_hot_title = util.add_intercept_fn(one_hot(title, size_of_dictionary))
+    one_hot_description = util.add_intercept_fn(one_hot(description, size_of_dictionary))
+    one_hot_tags = util.add_intercept_fn(one_hot(tags, size_of_dictionary))
     time = lyp.get_time_gap(publish_time, trending_date)
+    time = util.add_intercept_fn(np.reshape(time, (len(time), 1)))
     return one_hot_title, time, category, one_hot_tags, one_hot_description
 
 
 # train_tags = lyp.get_string_header('last_trendingdate_train.csv', 'tags')
 # token_tags = one_hot(train_tags, 100)
-# print(token_tags[0], token_tags[1])
+# print(np.shape(token_tags))
+
+

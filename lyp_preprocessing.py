@@ -22,9 +22,7 @@ def get_string_header(csvpath, header):
         output = [row[header] for row in reader]
     return output
 
-
-#clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0)
-
+#clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, )
 
 def get_time_gap(publish_time, trend_time):
     """
@@ -32,13 +30,13 @@ def get_time_gap(publish_time, trend_time):
     :return: a list of time gap (dim: n)
     """
     time_gap = list()
-    for i in range (publish_time.shape[0]):
+    for i in range (len(publish_time)):
         pt_year = int(publish_time[i][0:4])
         pt_month = int(publish_time[i][5:7])
         tt_year = int('20' + trend_time[i][0:2])
         tt_month = int(trend_time[i][6:8])
-        time_gap.append((tt_year - pt_year) * 12 + (tt_month - pt_month))
-    return time_gap
+        time_gap.append(1 + (tt_year - pt_year) * 12 + (tt_month - pt_month))
+    return np.array(time_gap)
 
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
