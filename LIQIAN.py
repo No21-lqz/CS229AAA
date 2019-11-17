@@ -175,7 +175,7 @@ def accurancy(y_label, prediction):
             result += 1
             t = int(y_label[i])
             new[t] += 1
-    print(new)
+    print('The accurancy count in each type',new)
     return result / n
 
 
@@ -183,23 +183,34 @@ def first_layer(fit_type, train_label, valid_type):
     """
     :param fit_type: Description, Title, Tags etc. a list
     :param train_label: a list of train label
-    :param valid_type:
+    :param valid_type: a list of valid label
     :return: an array of the probability
     """
     y_train = train_label
-    clf = SGDClassifier(alpha=0.2, loss="modified_huber", penalty="l2", max_iter=10000, fit_intercept=False)
+    clf = SGDClassifier(alpha=0.2, loss="modified_huber", penalty='l2', max_iter=10000, fit_intercept=False)
     clf.fit(fit_type, y_train)
     predict = clf._predict_proba(valid_type)
     train_probability = clf._predict_proba(fit_type)
     return predict, train_probability
 
 def GBM_model(train, test, label_train, label_test):
+    """
+
+    :param train: n x factor array, representing all factors in array
+    :param test: n x factor array, representing all factors in array
+    :param label_train: n x 1 array, representing the label of train
+    :param label_test: n x 1 array, representing the label of test
+    :return: the prediction result of GBM model
+    """
     clf = GradientBoostingClassifier(max_depth = 5, tol = 0.0001)
     clf.fit(train, label_train)
     print('Finish fit')
-    predict = clf.predict(test)
-    print(collections.Counter(predict))
+    prediction = clf.predict(test)
+    print(collections.Counter(prediction))
     print('Finish predict')
-    acc = accurancy(label_test, predict)
-    return acc
+    predict_ce = clf.predict_proba(test)
+    return prediction, predict_ce
+
+
+
 
