@@ -175,7 +175,8 @@ def accurancy(y_label, prediction):
             result += 1
             t = int(y_label[i])
             new[t] += 1
-    print('The accurancy count in each type',new)
+    print('The accurancy count in each type', new)
+    print('The count of each type:', collections.Counter(prediction))
     return result / n
 
 
@@ -187,7 +188,7 @@ def first_layer(fit_type, train_label, valid_type):
     :return: an array of the probability
     """
     y_train = train_label
-    clf = SGDClassifier(alpha=0.2, loss="modified_huber", penalty='l2', max_iter=10000, fit_intercept=False)
+    clf = SGDClassifier(alpha=0.2, loss="modified_huber", penalty='l2', tol=1e-6, max_iter=10000, fit_intercept=False)
     clf.fit(fit_type, y_train)
     predict = clf._predict_proba(valid_type)
     train_probability = clf._predict_proba(fit_type)
