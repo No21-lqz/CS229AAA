@@ -58,6 +58,12 @@ def create_3d(a, b, c, d, e):
     return train_p
 
 def trainlogsitic(X_train, Y_train):
+    """
+
+    :param X_train:
+    :param Y_train:
+    :return:
+    """
     n, m, z = X_train.shape
     theta = np.zeros([z, 1])
     new_x = np.zeros([n * 4, 5])
@@ -97,9 +103,9 @@ def trainsoftmax(X_train, Y_train):
         ll = sig
         itera += 1
         print('iteration: {:05d}', itera)
-        print('ll: {:.6f}', ll)'''
+        print('ll: {:.6f}', ll)
 
-    return theta
+    return theta'''
 
 def normalization(target):
     """
@@ -124,16 +130,17 @@ def predict_pro(predict_p, theta):
         pro[i] = np.matmul(predict_p[i, :, :], theta).argmax(axis=0)
     return pro
 
-def predict(y):
+def predict(predict_p, theta):
     """
-
-    :param y: n * 4 matrix needed to be labelled
+    theta : weights of 5 features
+    :param y: n * 4 * 5 matrix needed to be labelled
     :return: return predicted label
     """
-    n = y.shape[0]
-    predict_label = np.zeros(n)
-    predict_label = y.argmax(axis=1)
-    return predict_label
+    n, m, z = predict_p.shape
+    pro = np.zeros([n, m])
+    for i in range(n):
+        pro[i] = np.matmul(predict_p[i, :, :], theta).ravel()
+    return pro
 
 def accuracy(y, y_predict):
     """
@@ -147,7 +154,7 @@ def accuracy(y, y_predict):
         if y[i] == y_predict[i]:
             count += 1
     acc = count / n
-    return
+    return acc
 
 def crossentropy(y_predict, y_label):
     n, m = y_predict.shape
