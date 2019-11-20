@@ -2,6 +2,7 @@ import numpy as np
 from sklearn.ensemble import GradientBoostingClassifier
 from keras.preprocessing.text import Tokenizer
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.neural_network import MLPClassifier
 from sklearn.linear_model import SGDClassifier
 import lyp_preprocessing as lyp
 import kent
@@ -221,4 +222,9 @@ def random_forest(train, y, test, label):
     print('accurancy:', acc)
     return prediction
 
+def neuron_network(train, test, label_train, label_test):
+    clf = MLPClassifier(solver='lbfgs', activation='logistic', alpha=1e-5,hidden_layer_sizes = (5, 2), random_state = 1)
+    clf.fit(train, label_train)
+    prediction = clf.predict(test)
+    return prediction
 
