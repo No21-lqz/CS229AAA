@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.ensemble import GradientBoostingClassifier
 from keras.preprocessing.text import Tokenizer
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import SGDClassifier
 import lyp_preprocessing as lyp
 import kent
@@ -212,6 +213,12 @@ def GBM_model(train, test, label_train, label_test):
     predict_ce = clf.predict_proba(test)
     return prediction, predict_ce
 
-
+def random_forest(train, y, test, label):
+    clf = RandomForestClassifier(n_estimators=200, random_state=0)
+    clf.fit(train, y)
+    prediction = clf.predict(test)
+    acc = clf.score(test, label)
+    print('accurancy:', acc)
+    return prediction
 
 
