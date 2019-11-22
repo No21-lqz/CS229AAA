@@ -113,9 +113,9 @@ def after_stack(time, category,description, tags, title):
     return combined
 
 def second_layer(train_combined, train_label,predict_set):
-    clf = SGDClassifier(alpha=0.2, loss="modified_huber", penalty="l2", max_iter=10000, fit_intercept=True)
+    clf = SGDClassifier(alpha=0.2, loss="modified_huber", penalty='l2', tol=1e-6, max_iter=10000, fit_intercept=False)
     clf.fit(train_combined, train_label)
-    predict = clf.predict_proba(predict_set)
+    predict = clf.predict(predict_set)
     return predict
 
 def pred_label(probability):

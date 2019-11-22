@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.ensemble import GradientBoostingClassifier
 from keras.preprocessing.text import Tokenizer
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, VotingClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.linear_model import SGDClassifier
 import lyp_preprocessing as lyp
@@ -215,16 +215,21 @@ def GBM_model(train, test, label_train, label_test):
     return prediction, predict_ce
 
 def random_forest(train, y, test, label):
-    clf = RandomForestClassifier(n_estimators=200, random_state=0)
+    clf = RandomForestClassifier(n_estimators=150)
     clf.fit(train, y)
     prediction = clf.predict(test)
     acc = clf.score(test, label)
     print('accurancy:', acc)
     return prediction
 
-def neuron_network(train, test, label_train, label_test):
-    clf = MLPClassifier(solver='lbfgs', activation='logistic', alpha=1e-5,hidden_layer_sizes = (5, 2), random_state = 1)
+def neuron_network(train, test, label_train):
+    clf = MLPClassifier(solver='lbfgs', activation='logistic', alpha=1e-5, hidden_layer_sizes=(20, 5))
     clf.fit(train, label_train)
     prediction = clf.predict(test)
     return prediction
 
+def vote(fun1, fun2, fun3, train, valid, train_label):
+    clf = VotingClassifier(estimators=[('fun1', fun1), ('fun2', fun2), ('fun3', fun3)], voting='hard')
+    clf.fit(train, train_label)
+    prediction = clf.predict(valid)
+    return prediction
