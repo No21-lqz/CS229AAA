@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from sklearn.ensemble import GradientBoostingClassifier
 from keras.preprocessing.text import Tokenizer
 from sklearn.ensemble import RandomForestClassifier, VotingClassifier
@@ -8,6 +9,9 @@ import lyp_preprocessing as lyp
 import kent
 import util
 import collections
+from gensim import corpora
+import pprint
+
 
 def get_para(view, like, dislike, comment):
     """
@@ -97,6 +101,17 @@ def one_hot_test(train, test, k):
     t.fit_on_texts(train)
     encoded_docs = t.texts_to_matrix(test, mode='binary')
     return np.array(encoded_docs)
+
+def glove(test, train):
+    # glove = Glove(no_components=5, learning_rate=0.05)
+    #
+    # glove.fit(corpus.matrix, epochs=30, no_threads=4, verbose=True)
+    # glove.add_dictionary(corpus.dictionary)
+    # glove.save('glove.model')
+
+
+
+    return True
 
 
 def word_embedding(csv_path, size_of_dictionary, size_of_dictionary_description):
@@ -228,8 +243,23 @@ def neuron_network(train, test, label_train):
     prediction = clf.predict(test)
     return prediction
 
+
 def vote(fun1, fun2, fun3, train, valid, train_label):
     clf = VotingClassifier(estimators=[('fun1', fun1), ('fun2', fun2), ('fun3', fun3)], voting='hard')
     clf.fit(train, train_label)
     prediction = clf.predict(valid)
     return prediction
+
+
+def get_dictionary(txt_path):
+    x = np.array(pd.read_table(txt_path, sep=' '))
+    print(np.shape(x), type(x))
+    dic = {}
+    for i in range(len(x)):
+        print(x[i][0])
+        dic[x[i][0]] = i
+    return dic
+
+
+dic = get_dictionary('glove.42B.300d.txt')
+print(np.shape(dic))
