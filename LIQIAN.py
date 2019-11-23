@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 from sklearn.ensemble import GradientBoostingClassifier
 from keras.preprocessing.text import Tokenizer
 from sklearn.ensemble import RandomForestClassifier, VotingClassifier
@@ -7,10 +6,12 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.linear_model import SGDClassifier
 import lyp_preprocessing as lyp
 import kent
+import json
 import util
 import collections
-from gensim import corpora
-import pprint
+from gensim.test.utils import datapath, get_tmpfile
+from gensim.models import KeyedVectors
+from gensim.scripts.glove2word2vec import glove2word2vec
 
 
 def get_para(view, like, dislike, comment):
@@ -251,15 +252,27 @@ def vote(fun1, fun2, fun3, train, valid, train_label):
     return prediction
 
 
-def get_dictionary(txt_path):
-    x = np.array(pd.read_table(txt_path, sep=' '))
-    print(np.shape(x), type(x))
-    dic = {}
-    for i in range(len(x)):
-        print(x[i][0])
-        dic[x[i][0]] = i
-    return dic
+def get_dictionary(glove_path):
+    model = KeyedVectors.load_word2vec_format(glove_path)
+    return model
+
+def loadGolveModel(glove_file):
+    f = open(glove_file, 'r', encoding='UTF-8')
+    model = {}
+    for line in f:
+        splitline = line.split()
+        word = splitline[0]
+        embedding = np.array([float(val) for val in splitline[1: ]])
+        model[word] = embedding
+    print("Done.", len(model), "words loaded!")
+    return model
 
 
-dic = get_dictionary('glove.42B.300d.txt')
-print(np.shape(dic))
+f = open('dictionary.txt', 'r', encoding='UTF-8')
+a = f.read()
+dic = json.loads(a)
+f.close()
+print('end')
+
+
+# encoded_docs = t.texts_to_matrix(string, mode='binary')
