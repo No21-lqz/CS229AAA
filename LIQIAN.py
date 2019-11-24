@@ -6,12 +6,10 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.linear_model import SGDClassifier
 import lyp_preprocessing as lyp
 import kent
-import json
 import util
 import collections
-from gensim.test.utils import datapath, get_tmpfile
 from gensim.models import KeyedVectors
-from gensim.scripts.glove2word2vec import glove2word2vec
+import re
 
 
 def get_para(view, like, dislike, comment):
@@ -261,18 +259,38 @@ def loadGolveModel(glove_file):
     model = {}
     for line in f:
         splitline = line.split()
-        word = splitline[0]
+        word = splitline[0].replace("'", "")
         embedding = np.array([float(val) for val in splitline[1: ]])
         model[word] = embedding
     print("Done.", len(model), "words loaded!")
     return model
 
+def load_index_dic(glove_file):
+    f = open(glove_file, 'r', encoding='UTF-8')
+    dic = []
+    for line in f:
+        splitline = line.split()
+        # print(splitline[0])
+        dic.append(splitline[0])
+    f.close()
+    return dic
 
-f = open('dictionary.txt', 'r', encoding='UTF-8')
-a = f.read()
-dic = json.loads(a)
-f.close()
-print('end')
+def glove_embedding_one_string(string, dictionary):
+    words = string.lower().split()
+    new_words = [re.sub('[{}!#?,.:";@$%^&*()_+-=|[]:;">/?<,.~]', '', word) for word in words]
+    temp = [dictionary[i] for i in new_words if i in dictionary.keys()]
+    print(temp)
+    temp = np.array(temp)
+    return np.sum(temp, axis=0)
 
 
-# encoded_docs = t.texts_to_matrix(string, mode='binary')
+def glove_embedding(list, dictionary):
+    n, t = len(list), 0
+    temp = np.zeros((n, 300))
+    for i in list:
+        temp[t] = glove_embedding_one_string(i, dictionary)
+        t += 1
+    return np.array(temp)
+
+
+
