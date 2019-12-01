@@ -34,8 +34,10 @@ def get_time_gap(publish_time, trend_time):
     for i in range (len(publish_time)):
         pt_year = int(publish_time[i][0:4])
         pt_month = int(publish_time[i][5:7])
-        tt_year = int('20' + trend_time[i][0:2])
-        tt_month = int(trend_time[i][6:8])
+        # tt_year = int('20' + trend_time[i][-2:])
+        # tt_month = int(trend_time[i][6:8])
+        tt_year = int(trend_time[i].split('/')[2])
+        tt_month = int(trend_time[i].split('/')[0])
         time_gap.append(1 + (tt_year - pt_year) * 12 + (tt_month - pt_month))
     return np.array(time_gap)
 

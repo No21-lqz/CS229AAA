@@ -52,6 +52,45 @@ def label(view, parameter, view_bar, para_bar):
     return label
 
 
+def loadGolveModel(glove_file):
+    f = open(glove_file, 'r', encoding='UTF-8')
+    model = {}
+    for line in f:
+        splitline = line.split()
+        word = splitline[0].replace("'", "")
+        embedding = np.array([float(val) for val in splitline[1: ]])
+        model[word] = embedding
+    print("Done.", len(model), "words loaded!")
+    return model
+
+
+def load_index_dic(glove_file):
+    f = open(glove_file, 'r', encoding='UTF-8')
+    dic = []
+    for line in f:
+        splitline = line.split()
+        dic.append(splitline[0])
+    f.close()
+    return dic
+
+
+def glove_embedding_one_string(string, dictionary):
+    words = string.lower().split()
+    new_words = [re.sub('[{}!#?,.:";@$%^&*()_+-=|[]:;">/?<,.~]', '', word) for word in words]
+    temp = [dictionary[i] for i in new_words if i in dictionary.keys()]
+    temp = np.array(temp)
+    return np.sum(temp, axis=0)
+
+
+def glove_embedding(list, dictionary):
+    n, t = len(list), 0
+    temp = np.zeros((n, 300))
+    for i in list:
+        temp[t] = glove_embedding_one_string(i, dictionary)
+        t += 1
+    return np.array(temp)
+
+
 def get_token(string, header, k):
     """
     Word embedding for token
@@ -73,7 +112,6 @@ def get_token(string, header, k):
 
     tokenizer.fit_on_texts(string)
     sequences = tokenizer.texts_to_sequences(string)
-    #print(tokenizer.index_word)       # print dictionary create
     return sequences
 
 def one_hot(string, k):
@@ -101,19 +139,8 @@ def one_hot_test(train, test, k):
     encoded_docs = t.texts_to_matrix(test, mode='binary')
     return np.array(encoded_docs)
 
-def glove(test, train):
-    # glove = Glove(no_components=5, learning_rate=0.05)
-    #
-    # glove.fit(corpus.matrix, epochs=30, no_threads=4, verbose=True)
-    # glove.add_dictionary(corpus.dictionary)
-    # glove.save('glove.model')
 
-
-
-    return True
-
-
-def word_embedding(csv_path, size_of_dictionary, size_of_dictionary_description):
+def word_embedding(csv_path, glove_file):
     """
     Get the structured input data
     :param csv_path: The trina,valid, and test test path, .csv file name
@@ -122,14 +149,15 @@ def word_embedding(csv_path, size_of_dictionary, size_of_dictionary_description)
              category as integer, publish_time as time
              Type: np.array
     """
-    title,trending_date, publish_time, category, tags, description = kent.get_feature(csv_path)
-    one_hot_title = util.add_intercept_fn(one_hot(title, size_of_dictionary))
-    one_hot_description = util.add_intercept_fn(one_hot(description, size_of_dictionary_description))
-    one_hot_tags = util.add_intercept_fn(one_hot(tags, size_of_dictionary))
+    dictionary = loadGolveModel(glove_file)
+    title, trending_date, publish_time, category, tags, description = kent.get_feature(csv_path)
+    glove_title = glove_embedding(title, dictionary)
+    glove_description = glove_embedding(description, dictionary)
+    glove_tags = glove_embedding(tags, dictionary)
     time = lyp.get_time_gap(publish_time, trending_date)
     time = util.add_intercept_fn(np.reshape(time, (len(time), 1)))
     category = util.add_intercept_fn(np.reshape(category, (len(category), 1)))
-    return one_hot_title, time, category, one_hot_tags, one_hot_description
+    return glove_title, time, category, glove_tags, glove_description
 
 
 def word_embedding_test(train_path, test_path, size_of_dictionary, size_of_dictionary_description):
@@ -250,10 +278,6 @@ def vote(fun1, fun2, fun3, train, valid, train_label):
     return prediction
 
 
-def get_dictionary(glove_path):
-    model = KeyedVectors.load_word2vec_format(glove_path)
-    return model
-
 def loadGolveModel(glove_file):
     f = open(glove_file, 'r', encoding='UTF-8')
     model = {}
@@ -265,32 +289,6 @@ def loadGolveModel(glove_file):
     print("Done.", len(model), "words loaded!")
     return model
 
-def load_index_dic(glove_file):
-    f = open(glove_file, 'r', encoding='UTF-8')
-    dic = []
-    for line in f:
-        splitline = line.split()
-        # print(splitline[0])
-        dic.append(splitline[0])
-    f.close()
-    return dic
-
-def glove_embedding_one_string(string, dictionary):
-    words = string.lower().split()
-    new_words = [re.sub('[{}!#?,.:";@$%^&*()_+-=|[]:;">/?<,.~]', '', word) for word in words]
-    temp = [dictionary[i] for i in new_words if i in dictionary.keys()]
-    print(temp)
-    temp = np.array(temp)
-    return np.sum(temp, axis=0)
-
-
-def glove_embedding(list, dictionary):
-    n, t = len(list), 0
-    temp = np.zeros((n, 300))
-    for i in list:
-        temp[t] = glove_embedding_one_string(i, dictionary)
-        t += 1
-    return np.array(temp)
 
 
 
