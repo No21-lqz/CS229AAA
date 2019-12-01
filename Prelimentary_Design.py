@@ -11,6 +11,11 @@ import lyp_preprocessing as lyp
 from sklearn.linear_model import SGDClassifier
 import collections
 from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier, VotingClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import f1_score as f1
+
+
 #from scipy.special import softmax
 import collections
 
@@ -22,28 +27,62 @@ size_of_dictionary = 1000
 # Data preprocessing
 # Training Set
 train_label = kent.get_label('training.csv', view_bar, para_bar)
-train_softmax_label = kent.softmax_label('training.csv', view_bar, para_bar)
+# train_softmax_label = kent.softmax_label('training.csv', view_bar, para_bar)
 train_title, train_time, train_category, train_tags, train_description = zlq.word_embedding('training.csv',
                                                                                             'glove.42B.300d.txt')
 
-print(np.shape(train_description))
-# Creat dictionary
-# dictionary = zlq.loadGolveModel('glove.42B.300d.txt')
-# raw_discription_train = lyp.get_string_header('last_trendingdate_train.csv', 'description')
-# print(np.size(raw_discription_train))
-# train_discription = zlq.glove_embedding(raw_discription_train, dictionary)
-# print(np.shape(train_discription))
-
 
 # Valid Set
-# valid_label = kent.get_label('last_trendingdate_valid.csv', view_bar, para_bar)
+valid_label = kent.get_label('valid.csv', view_bar, para_bar)
 # valid_softmax_label = kent.softmax_label('last_trendingdate_valid.csv', view_bar, para_bar)
-# valid_title, valid_time, valid_category, valid_tags, valid_description = zlq.word_embedding('last_trendingdate_valid.csv',size_of_dictionary)
+valid_title, valid_time, valid_category, valid_tags, valid_description = zlq.word_embedding('valid.csv',
+                                                                                            'glove.42B.300d.txt')
 
 #Test Set
 # test_label = kent.softmax_label('last_trendingdate_test.csv', view_bar, para_bar)
 # test_title, test_time, test_category, test_tags, test_description = zlq.word_embedding('last_trendingdate_test.csv',size_of_dictionary)
 # test_1, test_2, test3 = zlq.separa_test('last_trendingdate_test.csv')
+
+train = np.hstack((train_title, train_time, train_category, train_tags, train_description))
+valid = np.hstack((valid_title, valid_time, valid_category, valid_tags, valid_description))
+print(np.shape(train), np.shape(valid))
+# prediction, predict_ce = zlq.GBM_model(train, valid, train_label, valid_label)
+# prediction = zlq.random_forest(train, train_label, valid, valid_label)
+# prediction = zlq.neuron_network(train, valid, train_label)
+fun1 = GradientBoostingClassifier(max_depth=8, tol=0.00001, random_state = 1)
+fun2 = RandomForestClassifier(n_estimators=150)
+fun3 = MLPClassifier(solver='lbfgs', activation='logistic', alpha=1e-5, hidden_layer_sizes=(20, 5))
+prediction = zlq.vote(fun3, fun2, fun1, train, valid, train_label)
+
+np.savetxt('Combination_1.txt', prediction)
+f1_score = f1(valid_label, prediction, average='weighted')
+acc = zlq.accurancy(valid_label, prediction)
+print('f1_score:', f1_score)
+print(acc)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # voter
@@ -63,7 +102,7 @@ print(np.shape(train_description))
 # pro_title = clf.predict_proba(train_title)
 # predict_title = clf.predict_proba(valid_title)
 #
-#
+
 # clf.fit(train_category, y_train)
 # pro_category = clf.predict_proba(train_category)
 # predict_category = clf.predict_proba(valid_category)

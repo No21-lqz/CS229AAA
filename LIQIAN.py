@@ -238,7 +238,8 @@ def first_layer(fit_type, train_label, valid_type):
     train_probability = clf._predict_proba(fit_type)
     return predict, train_probability
 
-def GBM_model(train, test, label_train, label_test):
+
+def GBM_model(train, test, label_train):
     """
 
     :param train: n x factor array, representing all factors in array
@@ -247,7 +248,7 @@ def GBM_model(train, test, label_train, label_test):
     :param label_test: n x 1 array, representing the label of test
     :return: the prediction result of GBM model
     """
-    clf = GradientBoostingClassifier(max_depth = 5, tol = 0.0001)
+    clf = GradientBoostingClassifier(max_depth=5, tol=0.0001)
     clf.fit(train, label_train)
     print('Finish fit')
     prediction = clf.predict(test)
@@ -277,17 +278,6 @@ def vote(fun1, fun2, fun3, train, valid, train_label):
     prediction = clf.predict(valid)
     return prediction
 
-
-def loadGolveModel(glove_file):
-    f = open(glove_file, 'r', encoding='UTF-8')
-    model = {}
-    for line in f:
-        splitline = line.split()
-        word = splitline[0].replace("'", "")
-        embedding = np.array([float(val) for val in splitline[1: ]])
-        model[word] = embedding
-    print("Done.", len(model), "words loaded!")
-    return model
 
 
 
