@@ -140,7 +140,7 @@ def one_hot_test(train, test, k):
     return np.array(encoded_docs)
 
 
-def word_embedding(csv_path, glove_file):
+def word_embedding(csv_path, dictionary):
     """
     Get the structured input data
     :param csv_path: The trina,valid, and test test path, .csv file name
@@ -149,7 +149,6 @@ def word_embedding(csv_path, glove_file):
              category as integer, publish_time as time
              Type: np.array
     """
-    dictionary = loadGolveModel(glove_file)
     title, trending_date, publish_time, category, tags, description = kent.get_feature(csv_path)
     glove_title = glove_embedding(title, dictionary)
     glove_description = glove_embedding(description, dictionary)
