@@ -13,6 +13,7 @@ import collections
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.ensemble import RandomForestClassifier, VotingClassifier
 from sklearn.neural_network import MLPClassifier
+from sklearn import svm
 from sklearn.metrics import f1_score as f1
 
 
@@ -25,18 +26,17 @@ view_bar, para_bar = 100000, [0, 300]
 size_of_dictionary = 1000
 
 # Data preprocessing
+dictionary = zlq.loadGolveModel('glove.42B.300d.txt')
 # Training Set
 train_label = kent.get_label('training.csv', view_bar, para_bar)
 # train_softmax_label = kent.softmax_label('training.csv', view_bar, para_bar)
-train_title, train_time, train_category, train_tags, train_description = zlq.word_embedding('training.csv',
-                                                                                            'glove.42B.300d.txt')
+train_title, train_time, train_category, train_tags, train_description = zlq.word_embedding('training.csv', dictionary)
 
 
 # Valid Set
 valid_label = kent.get_label('valid.csv', view_bar, para_bar)
 # valid_softmax_label = kent.softmax_label('last_trendingdate_valid.csv', view_bar, para_bar)
-valid_title, valid_time, valid_category, valid_tags, valid_description = zlq.word_embedding('valid.csv',
-                                                                                            'glove.42B.300d.txt')
+valid_title, valid_time, valid_category, valid_tags, valid_description = zlq.word_embedding('valid.csv', dictionary)
 
 #Test Set
 # test_label = kent.softmax_label('last_trendingdate_test.csv', view_bar, para_bar)
@@ -48,16 +48,20 @@ valid = np.hstack((valid_title, valid_time, valid_category, valid_tags, valid_de
 print(np.shape(train), np.shape(valid))
 # prediction, predict_ce = zlq.GBM_model(train, valid, train_label, valid_label)
 # prediction = zlq.random_forest(train, train_label, valid, valid_label)
+prediction = zlq.svm_prediction(train, train_label, valid)
 # prediction = zlq.neuron_network(train, valid, train_label)
-fun1 = GradientBoostingClassifier(max_depth=8, tol=0.00001, random_state = 1)
-fun2 = RandomForestClassifier(n_estimators=150)
-fun3 = MLPClassifier(solver='lbfgs', activation='logistic', alpha=1e-5, hidden_layer_sizes=(20, 5))
-prediction = zlq.vote(fun3, fun2, fun1, train, valid, train_label)
+# fun1 = GradientBoostingClassifier(max_depth=8, tol=0.00001, random_state = 1)
+# fun2 = RandomForestClassifier(n_estimators=150)
+# fun3 = MLPClassifier(solver='lbfgs', activation='logistic', alpha=1e-5, hidden_layer_sizes=(20, 5))
+# prediction = zlq.vote(fun3, fun2, fun1, train, valid, train_label)
 
 np.savetxt('Combination_1.txt', prediction)
+baseline = 2 * np.ones((5743, ))
 f1_score = f1(valid_label, prediction, average='weighted')
+base_f1 = f1(valid_label, baseline, average='weighted')
 acc = zlq.accurancy(valid_label, prediction)
 print('f1_score:', f1_score)
+print('f1_base:', base_f1)
 print(acc)
 
 

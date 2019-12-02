@@ -4,6 +4,7 @@ from keras.preprocessing.text import Tokenizer
 from sklearn.ensemble import RandomForestClassifier, VotingClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.linear_model import SGDClassifier
+from sklearn import svm
 import lyp_preprocessing as lyp
 import kent
 import util
@@ -278,6 +279,14 @@ def vote(fun1, fun2, fun3, train, valid, train_label):
     return prediction
 
 
+def svm_prediction(train, train_label, test):
+    clf = svm.SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0,
+        decision_function_shape='ovr', degree=3, gamma='scale', kernel='rbf',
+        max_iter=-1, probability=False, random_state=None, shrinking=True,
+        tol=0.001, verbose=False)
+    clf.fit(train, train_label)
+    prediction = clf.predict(test)
+    return prediction
 
 
 
