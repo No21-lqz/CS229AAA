@@ -8,10 +8,11 @@ from sklearn import svm
 import lyp_preprocessing as lyp
 import kent
 import util
+from sklearn.tree import DecisionTreeClassifier
 import collections
 from gensim.models import KeyedVectors
+from xgboost import XGBClassifier
 import re
-import mord
 
 def get_para(view, like, dislike, comment):
     """
