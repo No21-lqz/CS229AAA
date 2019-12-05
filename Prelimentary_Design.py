@@ -39,8 +39,7 @@ valid_title, valid_time, valid_category, valid_tags, valid_description = zlq.wor
 
 #Test Set
 test_label = kent.get_label('test.csv', view_bar, para_bar)
-
-valid_title, valid_time, valid_category, valid_tags, valid_description = zlq.word_embedding('test.csv', dictionary)
+test_title, test_time, test_category, test_tags, test_description = zlq.word_embedding('test.csv', dictionary)
 
 train = np.hstack((train_title, train_time, train_category, train_tags, train_description))
 valid = np.hstack((valid_title, valid_time, valid_category, valid_tags, valid_description))
