@@ -11,7 +11,7 @@ import util
 import collections
 from gensim.models import KeyedVectors
 import re
-
+import mord
 
 def get_para(view, like, dislike, comment):
     """
@@ -85,7 +85,8 @@ def glove_embedding_one_string(string, dictionary):
 
 def glove_embedding(list, dictionary):
     n, t = len(list), 0
-    temp = np.zeros((n, 300))
+    l = dictionary['a'].shape[0]
+    temp = np.zeros((n, l))
     for i in list:
         temp[t] = glove_embedding_one_string(i, dictionary)
         t += 1
@@ -258,7 +259,7 @@ def GBM_model(train, test, label_train):
     return prediction, predict_ce
 
 def random_forest(train, y, test, label):
-    clf = RandomForestClassifier(n_estimators=150)
+    clf = RandomForestClassifier(n_estimators=300, max_features = None)
     clf.fit(train, y)
     prediction = clf.predict(test)
     acc = clf.score(test, label)
@@ -266,7 +267,7 @@ def random_forest(train, y, test, label):
     return prediction
 
 def neuron_network(train, test, label_train):
-    clf = MLPClassifier(solver='lbfgs', activation='logistic', alpha=1e-5, hidden_layer_sizes=(20, 5))
+    clf = MLPClassifier(solver='adam', activation='logistic', alpha=0.4, tol=1e-5, hidden_layer_sizes=(100, 20), max_iter=500)
     clf.fit(train, label_train)
     prediction = clf.predict(test)
     return prediction
@@ -280,13 +281,28 @@ def vote(fun1, fun2, fun3, train, valid, train_label):
 
 
 def svm_prediction(train, train_label, test):
-    clf = svm.SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0,
-        decision_function_shape='ovr', degree=3, gamma='scale', kernel='rbf',
+    clf = svm.SVC(C=1.0, cache_size=200, coef0=1.0,
+        decision_function_shape='ovo', degree=5, gamma='scale', kernel='poly',
         max_iter=-1, probability=False, random_state=None, shrinking=True,
-        tol=0.001, verbose=False)
+        tol=0.001, verbose=True)
     clf.fit(train, train_label)
     prediction = clf.predict(test)
     return prediction
 
 
+def mord_predict(train, train_label, test):
+    clf = mord.MulticlassLogistic()
+    clf.fit(train, train_label)
+    prediction = clf.predict(test)
+    return prediction
 
+def xgb_prediction(train, train_label, test):
+    clf = XGBClassifier(booster = "gbtree")  #objective = reg:squaredlogerror
+    clf.fit(train, train_label)
+    return clf.predict(test)
+
+def tree(train, train_label, test):
+    clf = DecisionTreeClassifier(random_state=0, class_weight={0:5, 1:5, 2:0.05, 3:1})  #, class_weight={0:1, 1:1, 2:1, 3:1}
+    clf.fit(train, train_label)
+    prediction = clf.predict(test)
+    return prediction

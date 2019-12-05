@@ -6,6 +6,8 @@ import lyp_preprocessing as lyp
 import LIQIAN as zlq
 from sklearn.linear_model import SGDClassifier
 from sklearn.ensemble import GradientBoostingClassifier
+from imblearn.over_sampling import RandomOverSampler
+
 
 
 def load_predict_number_dataset(csv_path):
@@ -120,3 +122,16 @@ def second_layer(train_combined, train_label,predict_set):
 
 def pred_label(probability):
     return np.argmax(probability,axis=1)
+
+def oversample(x,y,class0, class1, class2, class3):
+    print("start resampling")
+    dictionary = {
+        0.0: class0,
+        1.0: class1,
+        2.0: class2,
+        3.0: class3
+    }
+    rps = RandomOverSampler(random_state=0)
+    train_rps_x, train_rps_y = rps.fit_sample(x, y)
+    print("finish resampling")
+    return train_rps_x, train_rps_y
