@@ -6,7 +6,7 @@ import lyp_preprocessing as lyp
 import LIQIAN as zlq
 from sklearn.linear_model import SGDClassifier
 from sklearn.ensemble import GradientBoostingClassifier
-from imblearn.over_sampling import RandomOverSampler
+import collections
 
 
 
@@ -135,3 +135,65 @@ def oversample(x,y,class0, class1, class2, class3):
     train_rps_x, train_rps_y = rps.fit_sample(x, y)
     print("finish resampling")
     return train_rps_x, train_rps_y
+
+
+def multibinary(train, train_label, test, fun, array):
+    prediction = np.zeros(test.shape[0])
+    test_index = np.arange(test.shape[0])
+    return recur(train, train_label, test, fun,array, test_index, prediction)
+
+def recur(train, train_label, test, fun,array, test_index, prediction):
+    def g(train, train_label, test, fun,array, test_index, prediction):
+        target = array[0]
+        # print(target)
+        if (array.shape[0] == 1):
+            for i in test_index:
+                prediction[int(i)] = target
+            return prediction
+        separate_label = zlq.relable(train_label, target)
+        #separate_prediction = np.random.choice(2, test_index.shape)
+        separate_prediction = fun(train, separate_label, test)
+        count0p = collections.Counter(separate_prediction).get(0)
+        count0t = collections.Counter(separate_label).get(0)
+        if count0p == None:
+            for i in test_index:
+                prediction[int(i)] = target
+            return prediction
+        new_train = np.zeros((count0t, train.shape[1]))
+        new_train_label = np.zeros((count0t,))
+        new_testindex = np.zeros((count0p,))
+        new_test = np.zeros((count0p,test.shape[1]))
+        train_index = 0
+        for i in range(separate_label.shape[0]):
+            if separate_label[i] == 0:
+                new_train[train_index,:] = train[i]
+                new_train_label[train_index] = train_label[i]
+                train_index+=1
+        test_position = 0
+        for i in range(separate_prediction.shape[0]):
+            if separate_prediction[i] == 1:
+                position = int(test_index[i])
+                prediction[position] = target
+            if separate_prediction[i] == 0:
+                new_testindex[test_position] = test_index[i]
+                new_test[test_position,:] = test[i]
+                test_position+=1
+        array = np.delete(array,0)
+        # print("train_label")
+        # print(collections.Counter(train_label))
+        #
+        # print("separate_label")
+        # print(collections.Counter(separate_label))
+        # print("new_train_label")
+        # print(collections.Counter(new_train_label))
+        # print("separate_prediction")
+        # print(collections.Counter(separate_prediction))
+        # print("test_position")
+        # print(test_position)
+        # print("prediction")
+        # print(collections.Counter(prediction))
+        # print(test_index.shape)
+        # print(new_testindex.shape)
+        return recur(new_train, new_train_label, new_test, fun,array, new_testindex, prediction)
+    return g(train, train_label, test, fun,array, test_index, prediction)
+

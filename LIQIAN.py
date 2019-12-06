@@ -14,7 +14,7 @@ import util
 from sklearn.tree import DecisionTreeClassifier
 import collections
 from gensim.models import KeyedVectors
-from xgboost import XGBClassifier
+#from xgboost import XGBClassifier
 import mord
 import re
 
@@ -260,8 +260,7 @@ def GBM_model(train, train_label, test):
     prediction = clf.predict(test)
     print(collections.Counter(prediction))
     print('Finish GBM prediction')
-    predict_ce = clf.predict_proba(test)
-    return prediction, predict_ce
+    return prediction
 
 
 def random_forest(train, train_label, test):
