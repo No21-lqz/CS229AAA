@@ -9,6 +9,15 @@ from sklearn.linear_model import SGDClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 import csv
+import pandas as pd
+import numpy as np
+import xgboost as xgb
+from xgboost.sklearn import XGBClassifier
+from sklearn.model_selection import GridSearchCV
+import time
+import datetime
+from datetime import date
+
 
 
 
@@ -30,16 +39,28 @@ def get_time_gap(publish_time, trend_time):
     :param csvpath: name of csv flie (type: string, like '***.csv')
     :return: a list of time gap (dim: n)
     """
-    time_gap = list()
-    for i in range (len(publish_time)):
-        pt_year = int(publish_time[i][0:4])
+    trend_day = np.zeros([len(trend_time), 1])
+    publish_day = np.zeros([len(trend_time), 1])
+    gap = np.zeros([len(trend_time), 1])
+    for i in range(len(trend_time)):
+        year = int(trend_time[i].split('/')[2])
+        month = int(trend_time[i].split('/')[0])
+        day = int(trend_time[i].split('/')[1])
+        trend = date(year, month, day)
+        year1 = int(publish_time[i][0:4])
+        month1 = int(publish_time[i][5:7])
+        day1 = int(publish_time[i][8:10])
+        publish = date(year1, month1, day1)
+        gap[i] = (trend - publish).days
+
+        '''pt_year = int(publish_time[i][0:4])
         pt_month = int(publish_time[i][5:7])
         # tt_year = int('20' + trend_time[i][-2:])
         # tt_month = int(trend_time[i][6:8])
         tt_year = int(trend_time[i].split('/')[2])
         tt_month = int(trend_time[i].split('/')[0])
-        time_gap.append(1 + (tt_year - pt_year) * 12 + (tt_month - pt_month))
-    return np.array(time_gap)
+        time_gap.append(1 + (tt_year - pt_year) * 12 + (tt_month - pt_month)'''
+    return gap
 
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
@@ -166,3 +187,16 @@ def crossentropy(y_predict, y_label):
             if y_label[i, j] == 1:
                 sum += -np.log(y_predict[i, j])
     return sum
+
+def xgb_prediction(train, train_label, test):
+    w_array = np.array([0.7] * train_label.shape[0])
+    w_array[train_label == 0] = 0.9
+    w_array[train_label == 1] = 8
+    w_array[train_label == 3] = 1.7
+    clf = XGBClassifier(learning_rate=0.1, n_estimators=100, max_depth=8,
+                    min_child_weight=2, gamma=0, subsample=0.8, colsample_bytree=0.8,
+                    objective= 'multi:softmax', num_class=4, nthread=4, scale_pos_weight=1, seed=27)
+    clf.fit(train, train_label, sample_weight=w_array)
+    prediction = clf.predict(test)
+
+    return prediction
