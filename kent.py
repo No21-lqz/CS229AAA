@@ -6,7 +6,6 @@ import lyp_preprocessing as lyp
 import LIQIAN as zlq
 from sklearn.linear_model import SGDClassifier
 from sklearn.ensemble import GradientBoostingClassifier
-from imblearn.over_sampling import RandomOverSampler
 import collections
 
 
