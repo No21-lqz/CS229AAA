@@ -41,14 +41,16 @@ valid_title, valid_time, valid_category, valid_tags, valid_description = zlq.wor
 test_label = kent.get_label('test.csv', view_bar, para_bar)
 test_title, test_time, test_category, test_tags, test_description = zlq.word_embedding('test.csv', dictionary)
 
+
 train = np.hstack((train_title, train_time, train_category, train_tags, train_description))
+
 valid = np.hstack((valid_title, valid_time, valid_category, valid_tags, valid_description))
 
 # prediction, predict_ce = zlq.GBM_model(train, valid, train_label, valid_label)
 #prediction = zlq.random_forest(train, train_label, valid, valid_label)
-#prediction = zlq.mord_predict(train, train_label, valid)
+prediction = zlq.mord_predict(train, train_label, valid)
 #prediction = zlq.svm_prediction(train_rps_x, train_rps_y, valid)
-#prediction = zlq.neuron_network(train, valid, train_label)
+# prediction = zlq.neuron_network(train, valid, train_label)
 #fun1 = GradientBoostingClassifier(max_depth=8, tol=0.00001, random_state = 1)
 #fun2 = RandomForestClassifier(n_estimators=150)
 #fun3 = MLPClassifier(solver='lbfgs', activation='logistic', alpha=1e-5, hidden_layer_sizes=(20, 5))
@@ -62,6 +64,7 @@ acc = zlq.accurancy(valid_label, prediction)
 print('f1_score:', f1_score)
 #print('f1_base:', base_f1)
 print(acc)
+
 
 
 

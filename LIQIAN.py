@@ -1,10 +1,13 @@
 import numpy as np
 from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.metrics import f1_score as f1
 from keras.preprocessing.text import Tokenizer
 from sklearn.ensemble import RandomForestClassifier, VotingClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.linear_model import SGDClassifier
 from sklearn import svm
+import warnings
+from sklearn.model_selection import GridSearchCV
 import lyp_preprocessing as lyp
 import kent
 import util
@@ -158,8 +161,8 @@ def word_embedding(csv_path, dictionary):
     glove_description = glove_embedding(description, dictionary)
     glove_tags = glove_embedding(tags, dictionary)
     time = lyp.get_time_gap(publish_time, trending_date)
-    time = util.add_intercept_fn(np.reshape(time, (len(time), 1)))
     category = util.add_intercept_fn(np.reshape(category, (len(category), 1)))
+    time = time.reshape((len(time), 1))
     return glove_title, time, category, glove_tags, glove_description
 
 
@@ -262,7 +265,8 @@ def GBM_model(train, train_label, test):
 
 
 def random_forest(train, train_label, test):
-    clf = RandomForestClassifier(n_estimators=300, max_features = None)
+    clf = RandomForestClassifier(random_state=27 ,max_features=None, n_estimators=300,
+                                 class_weight={0:2.92, 1:65, 2:1, 3:7.4})
     clf.fit(train, train_label)
     prediction = clf.predict(test)
     return prediction
@@ -304,8 +308,8 @@ def svm_prediction(train, train_label, test):
 #     clf.fit(train, train_label)
 #     return clf.predict(test)
 
-def tree(train, train_label, test):
-    clf = DecisionTreeClassifier(random_state=0, class_weight={0:5, 1:5, 2:0.05, 3:1})  #, class_weight={0:1, 1:1, 2:1, 3:1}
+def tree(train, train_label, test, i):
+    clf = DecisionTreeClassifier(random_state=i, class_weight={0:5, 1:5, 2:0.05, 3:1})  #, class_weight={0:1, 1:1, 2:1, 3:1}
     clf.fit(train, train_label)
     prediction = clf.predict(test)
     return prediction
@@ -318,4 +322,63 @@ def relable(label, target_label):
     :param target_label:
     :return: an array of the label, 1 means label is the targeted one and 0 is other labels
     """
-    return np.array([i == target_label for i in label])
+    return np.array([int(i == target_label) for i in label])
+
+
+def evaluate(model, test_features, test_labels):
+    predictions = model.predict(test_features)
+    errors = abs(predictions - test_labels)
+    mape = 100 * np.mean(errors / test_labels)
+    accuracy = 100 - mape
+    print('Model Performance')
+    print('Average Error: {:0.4f} degrees.'.format(np.mean(errors)))
+    print('Accuracy = {:0.2f}%.'.format(accuracy))
+    return accuracy
+
+
+def sgdc(train, train_label, test, random):
+    clf = SGDClassifier(random_state=random, alpha=0.2, loss="modified_huber", penalty='l2', tol=1e-6, max_iter=10000, fit_intercept=False)
+    clf.fit(train, train_label)
+    predict = clf.predict(test)
+    return predict
+
+
+def delete_feature(train, function, train_label, test, test_label, name, random):
+    """
+    :param list: list of separate feature
+    :param function: the training model
+    :return:
+    """
+    def g(train, test, name):
+        # Get the f1 score
+        n = len(train)
+        f1_score = np.zeros((n,))
+        temp_name = name
+        c = []
+        if n == 1:
+            # print('The last class:', name[0])
+            return None
+        for i in range(n):
+            temp_train, temp_test = train.copy(), test.copy()
+            temp_train.pop(i)
+            temp_test.pop(i)
+            new_train = temp_train[0]
+            new_test = temp_test[0]
+            if n - 2 > 0:
+                for j in range(n - 2):
+                    new_train = np.hstack((new_train, temp_train[j + 1]))
+                    new_test = np.hstack((new_test, temp_test[j + 1]))
+            prediction = function(new_train, train_label, new_test, random)
+            c += [collections.Counter(prediction)]
+            warnings.filterwarnings('ignore')
+            f1_score[i] = f1(test_label, prediction, average='weighted')
+            # print("the f1 score with class", name[i], "excluded:", f1_score[i])
+        remain_class = np.argmax(f1_score)
+        del name[remain_class]
+        train.pop(remain_class)
+        test.pop(remain_class)
+        print('The remaining class is:', temp_name)
+        print('the class predicted is:', c[remain_class])
+        return delete_feature(train, function, train_label, test, test_label, name, random)
+
+    return g(train, test, name)
