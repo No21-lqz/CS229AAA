@@ -11,7 +11,7 @@ import util
 from sklearn.tree import DecisionTreeClassifier
 import collections
 from gensim.models import KeyedVectors
-from xgboost import XGBClassifier
+#from xgboost import XGBClassifier
 import mord
 import re
 
@@ -257,8 +257,7 @@ def GBM_model(train, train_label, test):
     prediction = clf.predict(test)
     print(collections.Counter(prediction))
     print('Finish GBM prediction')
-    predict_ce = clf.predict_proba(test)
-    return prediction, predict_ce
+    return prediction
 
 
 def random_forest(train, train_label, test):
@@ -305,7 +304,7 @@ def svm_prediction(train, train_label, test):
 #     return clf.predict(test)
 
 def tree(train, train_label, test):
-    clf = DecisionTreeClassifier(random_state=0, class_weight={0:5, 1:5, 2:0.05, 3:1})  #, class_weight={0:1, 1:1, 2:1, 3:1}
+    clf = DecisionTreeClassifier(random_state=0)  #, class_weight={0:1, 1:1, 2:1, 3:1}
     clf.fit(train, train_label)
     prediction = clf.predict(test)
     return prediction
@@ -318,4 +317,10 @@ def relable(label, target_label):
     :param target_label:
     :return: an array of the label, 1 means label is the targeted one and 0 is other labels
     """
-    return np.array([i == target_label for i in label])
+    return np.array([int(i == target_label) for i in label])
+
+def sgdc(train, train_label, test):
+    clf = SGDClassifier(alpha=0.2, loss="modified_huber", penalty='l2', tol=1e-6, max_iter=10000, fit_intercept=False)
+    clf.fit(train, train_label)
+    predict = clf.predict(test)
+    return predict

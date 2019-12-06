@@ -38,11 +38,67 @@ valid_label = kent.get_label('valid.csv', view_bar, para_bar)
 valid_title, valid_time, valid_category, valid_tags, valid_description = zlq.word_embedding('valid.csv', dictionary)
 
 #Test Set
-test_label = kent.get_label('test.csv', view_bar, para_bar)
-test_title, test_time, test_category, test_tags, test_description = zlq.word_embedding('test.csv', dictionary)
+#test_label = kent.get_label('test.csv', view_bar, para_bar)
+#test_title, test_time, test_category, test_tags, test_description = zlq.word_embedding('test.csv', dictionary)
+
 
 train = np.hstack((train_title, train_time, train_category, train_tags, train_description))
 valid = np.hstack((valid_title, valid_time, valid_category, valid_tags, valid_description))
+
+order = np.array([2,0,3,1])
+
+# prediction_random = kent.multibinary(train, train_label, valid,zlq.random_forest, order)
+# # np.savetxt('Combination_random.txt', prediction_random)
+# print(collections.Counter(prediction_random))
+# f1_score = f1(valid_label, prediction_random, average='weighted')
+# acc = zlq.accurancy(valid_label, prediction_random)
+# print('f1_score:', f1_score)
+# print(acc)
+
+
+# prediction_GBM_model = kent.multibinary(train, train_label, valid,zlq.GBM_model, order)
+# # np.savetxt('Combination_GBM_model.txt', prediction_GBM_model)
+# print(collections.Counter(prediction_GBM_model))
+# f1_score = f1(valid_label, prediction_GBM_model, average='weighted')
+# acc = zlq.accurancy(valid_label, prediction_GBM_model)
+# print('f1_score:', f1_score)
+# print(acc)
+#
+# prediction_neuron_network = kent.multibinary(train, train_label, valid,zlq.neuron_network, order)
+# # np.savetxt('Combination_neuron_network.txt', prediction_neuron_network)
+# print(collections.Counter(prediction_neuron_network))
+# f1_score = f1(valid_label, prediction_neuron_network, average='weighted')
+# acc = zlq.accurancy(valid_label, prediction_neuron_network)
+# print('f1_score:', f1_score)
+# print(acc)
+#
+# prediction_svm_prediction = kent.multibinary(train, train_label, valid,zlq.svm_prediction, order)
+# # np.savetxt('Combination_svm_prediction.txt', prediction_svm_prediction)
+# print(collections.Counter(prediction_svm_prediction))
+# f1_score = f1(valid_label, prediction_svm_prediction, average='weighted')
+# acc = zlq.accurancy(valid_label, prediction_svm_prediction)
+# print('f1_score:', f1_score)
+# print(acc)
+#
+# prediction_tree = kent.multibinary(train, train_label, valid,zlq.tree, order)
+# # np.savetxt('Combination_tree.txt', prediction_tree)
+# print(collections.Counter(prediction_tree))
+# f1_score = f1(valid_label, prediction_tree, average='weighted')
+# acc = zlq.accurancy(valid_label, prediction_tree)
+# print('f1_score:', f1_score)
+# print(acc)
+#
+
+
+
+# prediction_sgdc = kent.multibinary(train, train_label, valid,zlq.sgdc, order)
+# # np.savetxt('Combination_sgdc.txt', prediction_sgdc)
+# print(collections.Counter(prediction_sgdc))
+# f1_score = f1(valid_label, prediction_sgdc, average='weighted')
+# acc = zlq.accurancy(valid_label, prediction_sgdc)
+# print('f1_score:', f1_score)
+# print(acc)
+
 
 # prediction, predict_ce = zlq.GBM_model(train, valid, train_label, valid_label)
 #prediction = zlq.random_forest(train, train_label, valid, valid_label)
@@ -54,14 +110,8 @@ valid = np.hstack((valid_title, valid_time, valid_category, valid_tags, valid_de
 #fun3 = MLPClassifier(solver='lbfgs', activation='logistic', alpha=1e-5, hidden_layer_sizes=(20, 5))
 #prediction = zlq.vote(fun3, fun2, fun1, train, valid, train_label)
 
-np.savetxt('Combination_1.txt', prediction)
-baseline = 2 * np.ones((5743, ))
-f1_score = f1(valid_label, prediction, average='weighted')
-base_f1 = f1(valid_label, baseline, average='weighted')
-acc = zlq.accurancy(valid_label, prediction)
-print('f1_score:', f1_score)
-#print('f1_base:', base_f1)
-print(acc)
+#base_f1 = f1(valid_label, baseline, average='weighted')
+
 
 
 
