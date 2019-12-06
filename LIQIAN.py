@@ -12,6 +12,7 @@ from sklearn.tree import DecisionTreeClassifier
 import collections
 from gensim.models import KeyedVectors
 from xgboost import XGBClassifier
+import mord
 import re
 
 def get_para(view, like, dislike, comment):
@@ -241,7 +242,7 @@ def first_layer(fit_type, train_label, valid_type):
     return predict, train_probability
 
 
-def GBM_model(train, test, label_train):
+def GBM_model(train, train_label, test):
     """
 
     :param train: n x factor array, representing all factors in array
@@ -251,30 +252,31 @@ def GBM_model(train, test, label_train):
     :return: the prediction result of GBM model
     """
     clf = GradientBoostingClassifier(max_depth=5, tol=0.0001)
-    clf.fit(train, label_train)
-    print('Finish fit')
+    clf.fit(train, train_label)
+    print('Finish GBM fit')
     prediction = clf.predict(test)
     print(collections.Counter(prediction))
-    print('Finish predict')
+    print('Finish GBM prediction')
     predict_ce = clf.predict_proba(test)
     return prediction, predict_ce
 
-def random_forest(train, y, test, label):
+
+def random_forest(train, train_label, test):
     clf = RandomForestClassifier(n_estimators=300, max_features = None)
-    clf.fit(train, y)
+    clf.fit(train, train_label)
     prediction = clf.predict(test)
-    acc = clf.score(test, label)
-    print('accurancy:', acc)
     return prediction
 
-def neuron_network(train, test, label_train):
-    clf = MLPClassifier(solver='adam', activation='logistic', alpha=0.4, tol=1e-5, hidden_layer_sizes=(100, 20), max_iter=500)
+
+def neuron_network(train, label_train, test):
+    clf = MLPClassifier(solver='adam', activation='logistic', alpha=0.4, tol=1e-5,
+                        hidden_layer_sizes=(100, 20), max_iter=500)
     clf.fit(train, label_train)
     prediction = clf.predict(test)
     return prediction
 
 
-def vote(fun1, fun2, fun3, train, valid, train_label):
+def vote(fun1, fun2, fun3, train, train_label, valid):
     clf = VotingClassifier(estimators=[('fun1', fun1), ('fun2', fun2), ('fun3', fun3)], voting='hard')
     clf.fit(train, train_label)
     prediction = clf.predict(valid)
@@ -290,20 +292,30 @@ def svm_prediction(train, train_label, test):
     prediction = clf.predict(test)
     return prediction
 
-
-def mord_predict(train, train_label, test):
-    clf = mord.MulticlassLogistic()
-    clf.fit(train, train_label)
-    prediction = clf.predict(test)
-    return prediction
-
-def xgb_prediction(train, train_label, test):
-    clf = XGBClassifier(booster = "gbtree")  #objective = reg:squaredlogerror
-    clf.fit(train, train_label)
-    return clf.predict(test)
+#
+# def mord_predict(train, train_label, test):
+#     clf = mord.MulticlassLogistic()
+#     clf.fit(train, train_label)
+#     prediction = clf.predict(test)
+#     return prediction
+#
+# def xgb_prediction(train, train_label, test):
+#     clf = XGBClassifier(booster = "gbtree")  #objective = reg:squaredlogerror
+#     clf.fit(train, train_label)
+#     return clf.predict(test)
 
 def tree(train, train_label, test):
     clf = DecisionTreeClassifier(random_state=0, class_weight={0:5, 1:5, 2:0.05, 3:1})  #, class_weight={0:1, 1:1, 2:1, 3:1}
     clf.fit(train, train_label)
     prediction = clf.predict(test)
     return prediction
+
+
+def relable(label, target_label):
+    """
+    change the multiple class into binary class
+    :param label: the array of the original label
+    :param target_label:
+    :return: an array of the label, 1 means label is the targeted one and 0 is other labels
+    """
+    return np.array([i == target_label for i in label])
