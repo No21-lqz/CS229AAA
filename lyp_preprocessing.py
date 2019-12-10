@@ -193,7 +193,7 @@ def xgb_prediction(train, train_label, test):
     w_array[train_label == 0] = 0.9
     w_array[train_label == 1] = 8
     w_array[train_label == 3] = 1.7
-    clf = XGBClassifier(learning_rate=0.1, n_estimators=100, max_depth=8,
+    clf = XGBClassifier(learning_rate=0.1, n_estimators=100, max_depth=9,
                     min_child_weight=2, gamma=0, subsample=0.8, colsample_bytree=0.8,
                     objective= 'multi:softmax', num_class=4, nthread=4, scale_pos_weight=1, seed=27)
     clf.fit(train, train_label, sample_weight=w_array)

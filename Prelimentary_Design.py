@@ -47,7 +47,7 @@ train = np.hstack((train_title, train_time, train_category, train_tags, train_de
 
 valid = np.hstack((valid_title, valid_time, valid_category, valid_tags, valid_description))
 
-order = np.array([2,0,3,1])
+order = np.array([2, 0, 3, 1])
 
 # prediction_random = kent.multibinary(train, train_label, valid,zlq.random_forest, order)
 # # np.savetxt('Combination_random.txt', prediction_random)
@@ -93,18 +93,7 @@ order = np.array([2,0,3,1])
 
 
 
-# prediction_sgdc = kent.multibinary(train, train_label, valid,zlq.sgdc, order)
-# # np.savetxt('Combination_sgdc.txt', prediction_sgdc)
-# print(collections.Counter(prediction_sgdc))
-# f1_score = f1(valid_label, prediction_sgdc, average='weighted')
-# acc = zlq.accurancy(valid_label, prediction_sgdc)
-# print('f1_score:', f1_score)
-# print(acc)
-
-
-# prediction, predict_ce = zlq.GBM_model(train, valid, train_label, valid_label)
-#prediction = zlq.random_forest(train, train_label, valid, valid_label)
-prediction = zlq.mord_predict(train, train_label, valid)
+#prediction = zlq.mord_predict(train, train_label, valid)
 #prediction = zlq.svm_prediction(train_rps_x, train_rps_y, valid)
 # prediction = zlq.neuron_network(train, valid, train_label)
 #fun1 = GradientBoostingClassifier(max_depth=8, tol=0.00001, random_state = 1)
