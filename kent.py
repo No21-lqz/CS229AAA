@@ -78,7 +78,8 @@ def get_feature(cvs_path):
     category = load_number_dataset(cvs_path, 'category_id')
     tags = lyp.get_string_header(cvs_path, 'tags')
     description = lyp.get_string_header(cvs_path, 'description')
-    return title,trending_date, publish_time, category, tags, description
+    duration = load_number_dataset(cvs_path, 'duration')
+    return title,trending_date, publish_time, category, tags, description, duration
 
 def get_time(cvs_path):
     publish_time = lyp.get_string_header(cvs_path, 'publish_time')

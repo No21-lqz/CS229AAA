@@ -156,14 +156,15 @@ def word_embedding(csv_path, dictionary):
              category as integer, publish_time as time
              Type: np.array
     """
-    title, trending_date, publish_time, category, tags, description = kent.get_feature(csv_path)
+    title, trending_date, publish_time, category, tags, description, duration = kent.get_feature(csv_path)
     glove_title = glove_embedding(title, dictionary)
     glove_description = glove_embedding(description, dictionary)
     glove_tags = glove_embedding(tags, dictionary)
     time = lyp.get_time_gap(publish_time, trending_date)
     category = util.add_intercept_fn(np.reshape(category, (len(category), 1)))
     time = time.reshape((len(time), 1))
-    return glove_title, time, category, glove_tags, glove_description
+    duration = duration.reshape((len(duration), 1))
+    return glove_title, time, category, glove_tags, glove_description, duration
 
 
 def word_embedding_test(train_path, test_path, size_of_dictionary, size_of_dictionary_description):
@@ -245,7 +246,7 @@ def first_layer(fit_type, train_label, valid_type):
     return predict, train_probability
 
 
-def GBM_model(train, train_label, test):
+def GBM_model(train, train_label, test, test_label):
     """
 
     :param train: n x factor array, representing all factors in array
@@ -254,11 +255,11 @@ def GBM_model(train, train_label, test):
     :param label_test: n x 1 array, representing the label of test
     :return: the prediction result of GBM model
     """
-    clf = GradientBoostingClassifier(max_depth=5, tol=0.0001)
-    clf.fit(train, train_label)
+    model = GradientBoostingClassifier(max_depth=5, tol=0.0001, n_estimators=100)
+    eval_set = [(train, train_label), (test, test_label)]
+    model.fit(train, train_label, eval_metric=["merror", "mlogloss"], eval_set=eval_set, verbose=True)
     print('Finish GBM fit')
-    prediction = clf.predict(test)
-    print(collections.Counter(prediction))
+    prediction = model.predict(test)
     print('Finish GBM prediction')
     return prediction
 

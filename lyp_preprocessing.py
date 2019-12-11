@@ -17,6 +17,7 @@ from sklearn.model_selection import GridSearchCV
 import time
 import datetime
 from datetime import date
+from matplotlib import pyplot as plt
 
 
 
@@ -188,15 +189,37 @@ def crossentropy(y_predict, y_label):
                 sum += -np.log(y_predict[i, j])
     return sum
 
-def xgb_prediction(train, train_label, test):
+def xgb_prediction(train, train_label, test, test_label):
     w_array = np.array([0.7] * train_label.shape[0])
     w_array[train_label == 0] = 0.9
     w_array[train_label == 1] = 8
     w_array[train_label == 3] = 1.7
-    clf = XGBClassifier(learning_rate=0.1, n_estimators=100, max_depth=9,
+    model = XGBClassifier(learning_rate=0.1, n_estimators=100, max_depth=9,
                     min_child_weight=2, gamma=0, subsample=0.8, colsample_bytree=0.8,
                     objective= 'multi:softmax', num_class=4, nthread=4, scale_pos_weight=1, seed=27)
-    clf.fit(train, train_label, sample_weight=w_array)
-    prediction = clf.predict(test)
+    eval_set = [(train, train_label), (test, test_label)]
+    model.fit(train, train_label, eval_metric=["merror", "mlogloss"], eval_set=eval_set, sample_weight=w_array, verbose=True)
+    results = model.evals_result()
+    epochs = len(results['validation_0']['merror'])
+    x_axis = range(0, epochs)
 
+    fig = plt.figure(figsize=(12, 4))
+    ax1 = fig.add_subplot(121)
+    ax1.plot(x_axis, results['validation_0']['mlogloss'], label='Train')
+    ax1.plot(x_axis, results['validation_1']['mlogloss'], label='Test')
+    ax1.legend()
+    plt.xlabel('Epochs')
+    plt.ylabel('Cross_entropy')
+    plt.title('XGBoost Log Loss')
+
+    ax2 = fig.add_subplot(122)
+    ax2.plot(x_axis, results['validation_0']['merror'], label='Train')
+    ax2.plot(x_axis, results['validation_1']['merror'], label='Test')
+    ax2.legend()
+    plt.xlabel('Epochs')
+    plt.ylabel('Prediction errors')
+    plt.title('XGBoost predicted errors')
+    plt.show()
+
+    prediction = model.predict(test)
     return prediction

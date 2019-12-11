@@ -29,13 +29,13 @@ size_of_dictionary = 1000
 # Data preprocessing
 dictionary = zlq.loadGolveModel('glove.twitter.27B.25d.txt')
 # Training Set
-train_label = kent.get_label('training.csv', view_bar, para_bar)
-train_title, train_time, train_category, train_tags, train_description = zlq.word_embedding('training.csv', dictionary)
+train_label = kent.get_label('training_set_with_time.csv', view_bar, para_bar)
+train_title, train_time, train_category, train_tags, train_description, train_duration = zlq.word_embedding('training_set_with_time.csv', dictionary)
 
 
 # Valid Set
-valid_label = kent.get_label('valid.csv', view_bar, para_bar)
-valid_title, valid_time, valid_category, valid_tags, valid_description = zlq.word_embedding('valid.csv', dictionary)
+valid_label = kent.get_label('valid_set_with_time.csv', view_bar, para_bar)
+valid_title, valid_time, valid_category, valid_tags, valid_description, valid_duration = zlq.word_embedding('valid_set_with_time.csv', dictionary)
 
 #Test Set
 #test_label = kent.get_label('test.csv', view_bar, para_bar)
@@ -43,9 +43,9 @@ valid_title, valid_time, valid_category, valid_tags, valid_description = zlq.wor
 
 
 
-train = np.hstack((train_title, train_time, train_category, train_tags, train_description))
+train = np.hstack((train_title, train_time, train_category, train_tags, train_description, train_duration))
 
-valid = np.hstack((valid_title, valid_time, valid_category, valid_tags, valid_description))
+valid = np.hstack((valid_title, valid_time, valid_category, valid_tags, valid_description, valid_duration))
 
 order = np.array([2, 0, 3, 1])
 
@@ -104,7 +104,20 @@ order = np.array([2, 0, 3, 1])
 #base_f1 = f1(valid_label, baseline, average='weighted')
 
 
+prediction_xgb = lyp.xgb_prediction(train, train_label, valid, valid_label)
+np.savetxt('xgb_prediction_with_time.txt', prediction_xgb)
+f1_score = f1(valid_label, prediction_xgb, average='weighted')
+print('f1_score_xgb:', f1_score)
 
+'''prediction_gbm = zlq.GBM_model(train, train_label, valid)
+np.savetxt('gbm_prediction_with_time.txt', prediction_gbm)
+f1_score = f1(valid_label, prediction_gbm, average='weighted')
+print('f1_score_gbm:', f1_score)
+
+prediction_randomforest = zlq.random_forest(train, train_label, valid)
+np.savetxt('randomforest_prediction_with_time.txt', prediction_randomforest)
+f1_score = f1(valid_label, prediction_randomforest, average='weighted')
+print('f1_score_randomforest:', f1_score)'''
 
 
 
