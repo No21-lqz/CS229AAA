@@ -264,9 +264,35 @@ def GBM_model(train, train_label, test, test_label):
     return prediction
 
 
+def GBM_multi_model(train, train_label, test):
+    """
+
+    :param train: n x factor array, representing all factors in array
+    :param test: n x factor array, representing all factors in array
+    :param label_train: n x 1 array, representing the label of train
+    :param label_test: n x 1 array, representing the label of test
+    :return: the prediction result of GBM model
+    """
+    # w_array = np.array([0.7] * train_label.shape[0])
+    # w_array[train_label == 0] = 0.9
+    # w_array[train_label == 1] = 8
+    # w_array[train_label == 3] = 1.7
+    model = GradientBoostingClassifier(max_depth=8, tol=0.0001, n_estimators=100)
+    model.fit(train, train_label)
+    print('Finish GBM fit')
+    prediction = model.predict(test)
+    print('Finish GBM prediction')
+    return prediction
+
 def random_forest(train, train_label, test):
     clf = RandomForestClassifier(random_state=27 ,max_features=None, n_estimators=300,
                                  class_weight={0:2.92, 1:65, 2:1, 3:7.4})
+    clf.fit(train, train_label)
+    prediction = clf.predict(test)
+    return prediction
+
+def random_forest_multi(train, train_label, test):
+    clf = RandomForestClassifier(random_state=27 ,max_features=None, n_estimators=300)
     clf.fit(train, train_label)
     prediction = clf.predict(test)
     return prediction
@@ -314,6 +340,12 @@ def tree(train, train_label, test, i):
     prediction = clf.predict(test)
     return prediction
 
+def tree_multi(train, train_label, test):
+    clf = DecisionTreeClassifier()  #, class_weight={0:1, 1:1, 2:1, 3:1}
+    clf.fit(train, train_label)
+    prediction = clf.predict(test)
+    return prediction
+
 
 def relable(label, target_label):
     """
@@ -338,6 +370,12 @@ def evaluate(model, test_features, test_labels):
 
 def sgdc(train, train_label, test, random):
     clf = SGDClassifier(random_state=random, alpha=0.2, loss="modified_huber", penalty='l2', tol=1e-6, max_iter=10000, fit_intercept=False)
+    clf.fit(train, train_label)
+    predict = clf.predict(test)
+    return predict
+
+def sgdc_multi(train, train_label, test):
+    clf = SGDClassifier(alpha=7.5, loss="modified_huber", penalty='l2', tol=1e-6, fit_intercept=False)
     clf.fit(train, train_label)
     predict = clf.predict(test)
     return predict

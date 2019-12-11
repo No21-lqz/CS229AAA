@@ -47,49 +47,70 @@ train = np.hstack((train_title, train_time, train_category, train_tags, train_de
 
 valid = np.hstack((valid_title, valid_time, valid_category, valid_tags, valid_description, valid_duration))
 
-order = np.array([2, 0, 3, 1])
+# order = np.array([2, 0, 3, 1])
 
-# prediction_random = kent.multibinary(train, train_label, valid,zlq.random_forest, order)
-# # np.savetxt('Combination_random.txt', prediction_random)
-# print(collections.Counter(prediction_random))
-# f1_score = f1(valid_label, prediction_random, average='weighted')
-# acc = zlq.accurancy(valid_label, prediction_random)
-# print('f1_score:', f1_score)
-# print(acc)
+order = np.array([0,2,1,3])
+
+prediction_random = kent.multibinary(train, train_label, valid,zlq.random_forest_multi, order)
+# np.savetxt('Combination_random_with_time.txt', prediction_random)
+print(collections.Counter(prediction_random))
+f1_score = f1(valid_label, prediction_random, average='weighted')
+acc = zlq.accurancy(valid_label, prediction_random)
+print('f1_score_random:', f1_score)
+print(acc)
 
 
-# prediction_GBM_model = kent.multibinary(train, train_label, valid,zlq.GBM_model, order)
-# # np.savetxt('Combination_GBM_model.txt', prediction_GBM_model)
-# print(collections.Counter(prediction_GBM_model))
-# f1_score = f1(valid_label, prediction_GBM_model, average='weighted')
-# acc = zlq.accurancy(valid_label, prediction_GBM_model)
-# print('f1_score:', f1_score)
-# print(acc)
+prediction_GBM_model = kent.multibinary(train, train_label, valid,zlq.GBM_multi_model, order)
+# np.savetxt('Combination_GBM_model_with_time.txt', prediction_GBM_model)
+print(collections.Counter(prediction_GBM_model))
+f1_score = f1(valid_label, prediction_GBM_model, average='weighted')
+acc = zlq.accurancy(valid_label, prediction_GBM_model)
+print('f1_score_GBM:', f1_score)
+print(acc)
 #
-# prediction_neuron_network = kent.multibinary(train, train_label, valid,zlq.neuron_network, order)
-# # np.savetxt('Combination_neuron_network.txt', prediction_neuron_network)
-# print(collections.Counter(prediction_neuron_network))
-# f1_score = f1(valid_label, prediction_neuron_network, average='weighted')
-# acc = zlq.accurancy(valid_label, prediction_neuron_network)
-# print('f1_score:', f1_score)
-# print(acc)
-#
+prediction_neuron_network = kent.multibinary(train, train_label, valid,zlq.neuron_network, order)
+# np.savetxt('Combination_neuron_network_with_time.txt', prediction_neuron_network)
+print(collections.Counter(prediction_neuron_network))
+f1_score = f1(valid_label, prediction_neuron_network, average='weighted')
+acc = zlq.accurancy(valid_label, prediction_neuron_network)
+print('f1_score_neuron:', f1_score)
+print(acc)
+
 # prediction_svm_prediction = kent.multibinary(train, train_label, valid,zlq.svm_prediction, order)
-# # np.savetxt('Combination_svm_prediction.txt', prediction_svm_prediction)
+# # np.savetxt('Combination_svm_prediction_with_time.txt', prediction_svm_prediction)
 # print(collections.Counter(prediction_svm_prediction))
 # f1_score = f1(valid_label, prediction_svm_prediction, average='weighted')
 # acc = zlq.accurancy(valid_label, prediction_svm_prediction)
-# print('f1_score:', f1_score)
+# print('f1_score_svm:', f1_score)
 # print(acc)
+# #
+prediction_tree = kent.multibinary(train, train_label, valid,zlq.tree_multi, order)
+# np.savetxt('Combination_tree_with_time.txt', prediction_tree)
+print(collections.Counter(prediction_tree))
+f1_score = f1(valid_label, prediction_tree, average='weighted')
+acc = zlq.accurancy(valid_label, prediction_tree)
+print('f1_score_tree:', f1_score)
+print(acc)
 #
-# prediction_tree = kent.multibinary(train, train_label, valid,zlq.tree, order)
-# # np.savetxt('Combination_tree.txt', prediction_tree)
-# print(collections.Counter(prediction_tree))
-# f1_score = f1(valid_label, prediction_tree, average='weighted')
-# acc = zlq.accurancy(valid_label, prediction_tree)
-# print('f1_score:', f1_score)
-# print(acc)
-#
+
+prediction_sgdc = kent.multibinary(train, train_label, valid,zlq.sgdc_multi, order)
+# np.savetxt('Combination_sgdc_with_time.txt', prediction_sgdc)
+print(collections.Counter(prediction_sgdc))
+f1_score = f1(valid_label, prediction_sgdc, average='weighted')
+acc = zlq.accurancy(valid_label, prediction_sgdc)
+print('f1_score_sgdc:', f1_score)
+print(acc)
+
+
+
+prediction_xgb = kent.multibinary(train, train_label,valid,lyp.xgb_prediction_mutli, order)
+# np.savetxt('Combination_xgb_with_time.txt', prediction_xgb)
+print(collections.Counter(prediction_xgb))
+f1_score = f1(valid_label, prediction_xgb, average='weighted')
+acc = zlq.accurancy(valid_label, prediction_xgb)
+print('f1_score_xgb:', f1_score)
+print(acc)
+
 
 
 
@@ -103,11 +124,6 @@ order = np.array([2, 0, 3, 1])
 
 #base_f1 = f1(valid_label, baseline, average='weighted')
 
-
-prediction_xgb = lyp.xgb_prediction(train, train_label, valid, valid_label)
-np.savetxt('xgb_prediction_with_time.txt', prediction_xgb)
-f1_score = f1(valid_label, prediction_xgb, average='weighted')
-print('f1_score_xgb:', f1_score)
 
 '''prediction_gbm = zlq.GBM_model(train, train_label, valid)
 np.savetxt('gbm_prediction_with_time.txt', prediction_gbm)

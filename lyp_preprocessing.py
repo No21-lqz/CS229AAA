@@ -223,3 +223,11 @@ def xgb_prediction(train, train_label, test, test_label):
 
     prediction = model.predict(test)
     return prediction
+
+def xgb_prediction_mutli(train, train_label, test):
+    model = XGBClassifier(learning_rate=0.1, n_estimators=100, max_depth=9,
+                    min_child_weight=2, gamma=0, subsample=0.8, colsample_bytree=0.8,
+                    objective= 'binary:hinge', nthread=4, scale_pos_weight=1, seed=1)
+    model.fit(train, train_label)
+    prediction = model.predict(test)
+    return prediction
