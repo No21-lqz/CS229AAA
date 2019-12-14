@@ -18,6 +18,8 @@ import time
 import datetime
 from datetime import date
 from matplotlib import pyplot as plt
+import seaborn
+import pandas as pd
 
 
 
@@ -196,7 +198,7 @@ def xgb_prediction(train, train_label, test, test_label):
     w_array[train_label == 3] = 1.7
     model = XGBClassifier(learning_rate=0.1, n_estimators=100, max_depth=9,
                     min_child_weight=2, gamma=0, subsample=0.8, colsample_bytree=0.8,
-                    objective= 'multi:softmax', num_class=4, nthread=4, scale_pos_weight=1, seed=27)
+                    objective= 'multi:softmax', num_class=4, nthread=4, scale_pos_weight=1, seed=1)
     eval_set = [(train, train_label), (test, test_label)]
     model.fit(train, train_label, eval_metric=["merror", "mlogloss"], eval_set=eval_set, sample_weight=w_array, verbose=True)
     results = model.evals_result()
@@ -210,7 +212,7 @@ def xgb_prediction(train, train_label, test, test_label):
     ax1.legend()
     plt.xlabel('Epochs')
     plt.ylabel('Cross_entropy')
-    plt.title('XGBoost Log Loss')
+    plt.title('XGBoost Loss')
 
     ax2 = fig.add_subplot(122)
     ax2.plot(x_axis, results['validation_0']['merror'], label='Train')
@@ -219,15 +221,25 @@ def xgb_prediction(train, train_label, test, test_label):
     plt.xlabel('Epochs')
     plt.ylabel('Prediction errors')
     plt.title('XGBoost predicted errors')
-    plt.show()
 
     prediction = model.predict(test)
     return prediction
 
-def xgb_prediction_mutli(train, train_label, test):
+
+def xgb_test(train, train_label, test, random=None):
+    w_array = np.array([0.7] * train_label.shape[0])
+    w_array[train_label == 0] = 0.9
+    w_array[train_label == 1] = 8
+    w_array[train_label == 3] = 1.7
     model = XGBClassifier(learning_rate=0.1, n_estimators=100, max_depth=9,
-                    min_child_weight=2, gamma=0, subsample=0.8, colsample_bytree=0.8,
-                    objective= 'binary:hinge', nthread=4, scale_pos_weight=1, seed=1)
-    model.fit(train, train_label)
-    prediction = model.predict(test)
+                          min_child_weight=2, gamma=0, subsample=0.8, colsample_bytree=0.8,
+                          objective='multi:softprob', num_class=4, nthread=4, scale_pos_weight=1, seed=random)
+    model.fit(train, train_label, sample_weight=w_array)
+    prediction = model.predict_proba(test)
     return prediction
+
+# def main():
+#     df = pd.read_csv('hot_norm.csv', index_col=0)
+#     print(df)
+#     plt.figure()
+#     seaborn.heatmap(data=df, square=True, cmap="OrRd")
